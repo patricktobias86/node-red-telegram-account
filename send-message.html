@@ -1,0 +1,300 @@
+<script type="text/javascript">
+    RED.nodes.registerType('send-message', {
+        category: 'telegram-account',
+        color: '#229ED9',
+        icon: 'tg.png',
+        align: "right",
+        defaults: {
+            name: { value: '' },
+            chatId: { value: '' },
+            message: { value: '' },
+            config: { type: 'config', required: false },
+            parseMode: { value: 'md' }, // Default parse mode is Markdown
+            schedule: { value: '' }, // Default schedule is empty
+            replyTo: { value: '' }, // Reply to a message
+            attributes: { value: '' }, // Message attributes
+            formattingEntities: { value: '' }, // Message formatting entities
+            linkPreview: { value: false }, // Show link preview
+            file: { value: [] }, // File to be sent
+            thumb: { value: '' }, // Thumbnail for the file
+            forceDocument: { value: false }, // Send the file as a document
+            clearDraft: { value: false }, // Clear existing draft
+            buttons: { value: '' }, // Buttons to be shown after sending
+            silent: { value: false }, // Whether to notify in a broadcast channel
+            supportStreaming: { value: false }, // Whether the sent video supports streaming
+            noforwards: { value: false }, // Disable forwarding
+            commentTo: { value: '' }, // Comment to a message in a broadcast channel
+            topMsgId: { value: '' }, // Reply to a specific thread
+        },
+        inputs: 1,
+        outputs: 1,
+        label: function () {
+            return this.name || 'Send Message';
+        },
+        oneditprepare: function () {
+            const node = this;
+
+            $("#node-input-parseMode").change(function () {
+                if ($(this).val() === "html") {
+                    $("#node-linkPreview-row").show();
+                } else {
+                    $("#node-linkPreview-row").hide();
+                }
+            });
+
+
+            // const filesContainer = $("#node-input-files-container");
+            // if (Array.isArray(node.file)) {
+            //     node.file.forEach(file => {
+            //         const fileInput = `
+            //     <div class="node-input-file-container">
+            //         <input type="text" class="node-input-file" style="display: block; margin-top: 5px;" value="${file}">
+            //         <button class="node-input-remove-file editor-button editor-button-small editor-button-delete" type="button">Remove</button>
+            //     </div>
+            // `;
+            //         filesContainer.append(fileInput);
+            //     });
+            // }
+
+            // $("#node-input-add-file").click(function () {
+            //     const filesContainer = $("#node-input-files-container");
+            //     const fileInput = `
+            //       <div class="node-input-file-container">
+            //           <input type="text" class="node-input-file" style="display: block; margin-top: 5px;">
+            //           <button class="node-input-remove-file editor-button editor-button-small editor-button-delete" type="button">Remove</button>
+            //       </div>
+            //   `;
+            //     filesContainer.append(fileInput);
+            // });
+
+            // $("#node-input-files-container").on("click", ".node-input-remove-file", function () {
+            //     $(this).closest(".node-input-file-container").remove();
+            //     const removedIndex = $(this).closest(".node-input-file-container").index();
+            //     const updatedFiles = node.file || [];
+            //     updatedFiles.splice(removedIndex, 1); 
+            //     node.file = updatedFiles;
+            // });
+
+            // $("#node-input-files-container").on("change", ".node-input-file", function () {
+            //     const fileInput = $(this);
+            //     const updatedFiles = node.file || [];
+            //     updatedFiles.push(fileInput.val());
+            //     node.file = updatedFiles;
+            // });
+        },
+    });
+</script>
+
+
+<script type="text/html" data-template-name="send-message">
+    <div class="form-row">
+      <label for="node-input-name">
+        <i class="fa fa-tag"></i> Name
+      </label>
+      <input type="text" id="node-input-name" placeholder="Name">
+    </div>
+    <div class="form-row">
+      <label for="node-input-config">
+        <i class="fa fa-gear"></i> Config
+      </label>
+      <input type="hidden" id="node-input-config">
+    </div>
+  
+    <div class="form-row">
+      <label for="node-input-chat_id">
+        <i class="fa fa-user"></i> Chat ID
+      </label>
+      <input type="text" id="node-input-chatId" placeholder="Peer ID">
+    </div>
+  
+    <div class="form-row">
+      <label for="node-input-message">
+        <i class="fa fa-pencil"></i> Message
+      </label>
+      <textarea type="text" id="node-input-message" placeholder="Message"></textarea>
+    </div>
+
+    <div class="form-row">
+      <label for="node-input-parseMode">
+        <i class="fa fa-code"></i> Parse Mode
+      </label>
+      <select id="node-input-parseMode">
+        <option value="md" selected>Markdown</option>
+        <option value="html">HTML</option>
+      </select>
+    </div>
+
+    <div class="form-row">
+      <label for="node-input-schedule">
+        <i class="fa fa-clock"></i> Schedule
+      </label>
+      <input type="datetime-local" id="node-input-schedule" placeholder="Schedule">
+    </div>
+    <div class="form-row" id="node-linkPreview-row">
+      <label for="node-input-linkPreview">
+          <i class="fa fa-link"></i> Show Link Preview
+      </label>
+      <input type="checkbox" id="node-input-linkPreview">
+  </div>
+  
+  <div class="form-row">
+    <label>
+        <i class="fa fa-file"></i> Files
+    </label>
+    <div id="node-input-files-container">
+
+    </div>
+    <button id="node-input-add-file" class="editor-button editor-button-large editor-button-add" style="margin-top: 1rem;" type="button">Add File</button>
+</div>
+  
+  <div class="form-row" id="node-thumb-row">
+      <label for="node-input-thumb">
+          <i class="fa fa-file-image"></i> Thumbnail (Optional)
+      </label>
+      <input type="text" id="node-input-thumb">
+  </div>
+  
+  <div class="form-row">
+      <label for="node-input-forceDocument">
+          <i class="fa fa-file"></i> Force Send as Document
+      </label>
+      <input type="checkbox" id="node-input-forceDocument">
+  </div>
+  
+  <div class="form-row">
+      <label for="node-input-clearDraft">
+          <i class="fa fa-trash"></i> Clear Existing Draft
+      </label>
+      <input type="checkbox" id="node-input-clearDraft">
+  </div>
+  
+  <div class="form-row">
+      <label for="node-input-buttons">
+          <i class="fa fa-th"></i> Buttons
+      </label>
+      <textarea type="text" id="node-input-buttons" placeholder="Buttons"></textarea>
+  </div>
+  
+  <div class="form-row">
+      <label for="node-input-silent">
+          <i class="fa fa-bell-slash"></i> Silent Notification
+      </label>
+      <input type="checkbox" id="node-input-silent">
+  </div>
+  
+  <div class="form-row">
+      <label for="node-input-supportStreaming">
+          <i class="fa fa-video"></i> Support Streaming
+      </label>
+      <input type="checkbox" id="node-input-supportStreaming">
+  </div>
+  
+  <div class="form-row">
+      <label for="node-input-noforwards">
+          <i class="fa fa-forward"></i> Disable Forwarding
+      </label>
+      <input type="checkbox" id="node-input-noforwards">
+  </div>
+  
+  <div class="form-row">
+      <label for="node-input-commentTo">
+          <i class="fa fa-comments"></i> Comment To Message
+      </label>
+      <input type="text" id="node-input-commentTo" placeholder="Comment To">
+  </div>
+  
+  <div class="form-row">
+      <label for="node-input-topMsgId">
+          <i class="fa fa-reply"></i> Reply To Thread
+      </label>
+      <input type="text" id="node-input-topMsgId" placeholder="Top Msg ID">
+  </div>
+  </script>
+
+  <script type="text/html" data-help-name="send-message">
+    <p>The <b>send-message</b> node allows sending messages via Telegram using the <code>telegram</code> library. It supports various message types, formatting options, and additional features like scheduling and silent messages.</p>
+
+    <h3>Inputs</h3>
+    <dl class="message-properties">
+        <dt>payload.chatId
+            <span class="property-type">string</span>
+        </dt>
+        <dd>The recipient's chat ID, username (prefixed with <code>@</code>), or "me" for personal chats.</dd>
+        
+        <dt>payload.message
+            <span class="property-type">string</span>
+        </dt>
+        <dd>The message text to send.</dd>
+        
+        <dt>payload.parseMode
+            <span class="property-type">string</span>
+        </dt>
+        <dd>Specifies the formatting mode, such as <code>markdown</code> or <code>html</code>.</dd>
+        
+        <dt>payload.schedule
+            <span class="property-type">string</span>
+        </dt>
+        <dd>The timestamp (or ISO date string) to schedule the message for later sending.</dd>
+        
+        <dt>payload.replyTo
+            <span class="property-type">number</span>
+        </dt>
+        <dd>The ID of the message to reply to, if applicable.</dd>
+
+        <dt>payload.attributes
+            <span class="property-type">object</span>
+        </dt>
+        <dd>Additional attributes for the message.</dd>
+
+        <dt>payload.linkPreview
+            <span class="property-type">boolean</span>
+        </dt>
+        <dd>Determines whether to show link previews in the message.</dd>
+        
+        <dt>payload.file
+            <span class="property-type">string</span>
+        </dt>
+        <dd>The path to a file to send (e.g., images, videos, documents).</dd>
+        
+        <dt>payload.thumb
+            <span class="property-type">string</span>
+        </dt>
+        <dd>The path to a thumbnail for the file, if applicable.</dd>
+        
+        <dt>payload.buttons
+            <span class="property-type">array</span>
+        </dt>
+        <dd>An array of button configurations for inline or reply keyboards.</dd>
+        
+        <dt>payload.silent
+            <span class="property-type">boolean</span>
+        </dt>
+        <dd>If true, sends the message silently (no notification sound).</dd>
+    </dl>
+
+    <h3>Outputs</h3>
+    <dl class="message-properties">
+        <dt>payload.response
+            <span class="property-type">object</span>
+        </dt>
+        <dd>The response from the Telegram API, containing details of the sent message.</dd>
+    </dl>
+
+    <h3>Details</h3>
+    <p>To use the <b>send-message</b> node, you must provide the recipient's chat ID and the message content. Additional parameters like <code>file</code>, <code>thumb</code>, and <code>buttons</code> enable sending multimedia messages or interactive content. The node automatically resolves usernames prefixed with <code>@</code> to their corresponding chat entities.</p>
+
+    <p>If scheduling is enabled, the <code>schedule</code> parameter should contain a valid timestamp or ISO date string. When sending files, ensure the <code>file</code> parameter specifies the correct path or URL.</p>
+
+    <h3>Example</h3>
+    <pre>
+    {
+        "payload": {
+            "chatId": "@example_user",
+            "message": "Hello, World!",
+            "parseMode": "markdown",
+            "silent": true
+        }
+    }
+    </pre>
+    <p>This input sends a silent message in Markdown format to the user <code>@example_user</code>.</p>
+</script>

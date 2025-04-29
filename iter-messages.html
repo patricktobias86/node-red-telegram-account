@@ -1,0 +1,365 @@
+<script type="text/javascript">
+    RED.nodes.registerType('iter-messages', {
+        category: 'telegram',
+        color: '#32a3e0',
+        defaults: {
+            name: { value: '' },
+            config: { type: 'config', required: true },
+            chatId: { value: '', required: false },
+            limit: { value: '', required: false },
+            offsetDate: { value: '', required: false },
+            offsetId: { value: '', required: false },
+            maxId: { value: '', required: false },
+            minId: { value: '', required: false },
+            addOffset: { value: '', required: false },
+            search: { value: '', required: false },
+            filter: { value: '', required: false },
+            fromUser: { value: '', required: false },
+            waitTime: { value: '', required: false },
+            messageIds: { value: '', required: false },
+            reverse: { value: '', required: false },
+            replyTo: { value: '', required: false },
+            scheduled: { value: '', required: false }
+        },
+        inputs: 1,
+        outputs: 1,
+        paletteLabel: 'Iterate Messages',
+        label: function () {
+            return this.name || 'Iterate Messages';
+        },
+        oneditprepare: function(){
+            const node = this;
+            $("#node-input-messageIds").val((node.messageIds || []).join(","))
+        },
+        oneditsave:function(){
+            const node = this;
+            const messageIds =  $("#node-input-messageIds").val();
+            if(messageIds){
+                node.messageIds = messageIds.split(",").map(id => parseInt(id))
+            }
+        },
+    });
+</script>
+
+<script type="text/html" data-template-name="iter-messages">
+    <div class="form-row">
+        <label for="node-input-name">
+            <i class="fa fa-tag"></i> Name
+        </label>
+        <input
+            type="text"
+            id="node-input-name"
+            placeholder="Name"
+            style="width: 60%"
+            ng-model="name"
+        />
+    </div>
+    <div class="form-row">
+        <label for="node-input-config">
+            <i class="fa fa-tag"></i> Config
+        </label>
+        <input
+            type="text"
+            id="node-input-config"
+            placeholder="Config"
+            style="width: 60%"
+            ng-model="config"
+        />
+    </div>
+    <div class="form-row">
+        <label for="node-input-chatId">
+            <i class="fa fa-tag"></i> Chat ID
+        </label>
+        <input
+            type="text"
+            id="node-input-chatId"
+            placeholder="Chat ID"
+            style="width: 60%"
+            ng-model="chatId"
+        />
+    </div>
+    <div class="form-row">
+        <label for="node-input-limit">
+            <i class="fa fa-tag"></i> Limit
+        </label>
+        <input
+            type="number"
+            id="node-input-limit"
+            placeholder="Limit"
+            style="width: 60%"
+            ng-model="limit"
+        />
+    </div>
+    <div class="form-row">
+        <label for="node-input-offsetDate">
+            <i class="fa fa-tag"></i> Offset Date
+        </label>
+        <input
+            type="datetime-local"
+            id="node-input-offsetDate"
+            placeholder="Offset Date"
+            style="width: 60%"
+            ng-model="offsetDate"
+        />
+    </div>
+    <div class="form-row">
+        <label for="node-input-offsetId">
+            <i class="fa fa-tag"></i> Offset ID
+        </label>
+        <input
+            type="number"
+            id="node-input-offsetId"
+            placeholder="Offset ID"
+            style="width: 60%"
+            ng-model="offsetId"
+        />
+    </div>
+    <div class="form-row">
+        <label for="node-input-maxId">
+            <i class="fa fa-tag"></i> Max ID
+        </label>
+        <input
+            type="number"
+            id="node-input-maxId"
+            placeholder="Max ID"
+            style="width: 60%"
+            ng-model="maxId"
+        />
+    </div>
+    <div class="form-row">
+        <label for="node-input-minId">
+            <i class="fa fa-tag"></i> Min ID
+        </label>
+        <input
+            type="number"
+            id="node-input-minId"
+            placeholder="Min ID"
+            style="width: 60%"
+            ng-model="minId"
+        />
+    </div>
+    <div class="form-row">
+        <label for="node-input-addOffset">
+            <i class="fa fa-tag"></i> Add Offset
+        </label>
+        <input
+            type="number"
+            id="node-input-addOffset"
+            placeholder="Add Offset"
+            style="width: 60%"
+            ng-model="addOffset"
+        />
+    </div>
+    <div class="form-row">
+        <label for="node-input-search">
+            <i class="fa fa-tag"></i> Search
+        </label>
+        <input
+            type="text"
+            id="node-input-search"
+            placeholder="Search"
+            style="width: 60%"
+            ng-model="search"
+        />
+    </div>
+    <div class="form-row">
+        <label for="node-input-filter">
+            <i class="fa fa-tag"></i> Filter
+        </label>
+        <input type="checkbox" name="filter" value="InputMessagesFilterEmpty">Empty<br>
+        <input type="checkbox" name="filter" value="InputMessagesFilterPhotos">Photos<br>
+        <input type="checkbox" name="filter" value="InputMessagesFilterVideo">Video<br>
+        <input type="checkbox" name="filter" value="InputMessagesFilterPhotoVideo">Photo and Video<br>
+        <input type="checkbox" name="filter" value="InputMessagesFilterDocument">Document<br>
+        <input type="checkbox" name="filter" value="InputMessagesFilterUrl">URL<br>
+        <input type="checkbox" name="filter" value="InputMessagesFilterGif">GIF<br>
+        <input type="checkbox" name="filter" value="InputMessagesFilterVoice">Voice<br>
+        <input type="checkbox" name="filter" value="InputMessagesFilterMusic">Music<br>
+        <input type="checkbox" name="filter" value="InputMessagesFilterChatPhotos">Chat Photos<br>
+        <input type="checkbox" name="filter" value="InputMessagesFilterPhoneCalls">Phone Calls<br>
+        <input type="checkbox" name="filter" value="InputMessagesFilterRoundVoice">Round Voice<br>
+        <input type="checkbox" name="filter" value="InputMessagesFilterRoundVideo">Round Video<br>
+        <input type="checkbox" name="filter" value="InputMessagesFilterMyMentions">My Mentions<br>
+        <input type="checkbox" name="filter" value="InputMessagesFilterGeo">Geo<br>
+        <input type="checkbox" name="filter" value="InputMessagesFilterContacts">Contacts<br>
+        <input type="checkbox" name="filter" value="InputMessagesFilterPinned">Pinned<br>
+
+    </div>
+    <div class="form-row">
+        <label for="node-input-fromUser">
+            <i class="fa fa-tag"></i> From User
+        </label>
+        <input
+            type="text"
+            id="node-input-fromUser"
+            placeholder="From User"
+            style="width: 60%"
+            ng-model="fromUser"
+        />
+    </div>
+    <div class="form-row">
+        <label for="node-input-waitTime">
+            <i class="fa fa-tag"></i> Wait Time
+        </label>
+        <input
+            type="number"
+            id="node-input-waitTime"
+            placeholder="Wait Time"
+            style="width: 60%"
+            ng-model="waitTime"
+        />
+    </div>
+    <div class="form-row">
+        <label for="node-input-messageIds">
+            <i class="fa fa-tag"></i> Message IDs
+        </label>
+        <input
+            type="text"
+            id="node-input-messageIds"
+            placeholder="123,1245"
+            style="width: 60%"
+            ng-model="messageIds"
+        />
+    </div>
+    <div class="form-row">
+        <label for="node-input-reverse">
+            <i class="fa fa-tag"></i> Reverse
+        </label>
+        <input
+            type="checkbox"
+            id="node-input-reverse"
+            ng-model="reverse"
+        />
+    </div>
+    <div class="form-row">
+        <label for="node-input-replyTo">
+            <i class="fa fa-tag"></i> Reply To
+        </label>
+        <input
+            type="number"
+            id="node-input-replyTo"
+            placeholder="Reply To"
+            style="width: 60%"
+            ng-model="replyTo"
+        />
+    </div>
+    <div class="form-row">
+        <label for="node-input-scheduled">
+            <i class="fa fa-tag"></i> Scheduled
+        </label>
+        <input
+            type="checkbox"
+            id="node-input-scheduled"
+            ng-model="scheduled"
+        />
+    </div>
+</script>
+
+<script type="text/html" data-help-name="iter-messages">
+    <p>The <b>iter-messages</b> node retrieves messages from a specified chat or user using the Telegram API. It supports a wide range of filtering and pagination options, allowing for efficient message iteration.</p>
+
+    <h3>Inputs</h3>
+    <dl class="message-properties">
+        <dt>payload.client
+            <span class="property-type">object</span>
+        </dt>
+        <dd>An optional Telegram client instance if not configured globally.</dd>
+
+        <dt>payload.chatId
+            <span class="property-type">string</span>
+        </dt>
+        <dd>The ID or username of the chat or user to retrieve messages from. Use "me" for personal messages.</dd>
+
+        <dt>payload.limit
+            <span class="property-type">number</span>
+        </dt>
+        <dd>Maximum number of messages to retrieve.</dd>
+
+        <dt>payload.offsetDate
+            <span class="property-type">string | number</span>
+        </dt>
+        <dd>Fetch messages starting from this date. Accepts a UNIX timestamp or a date string.</dd>
+
+        <dt>payload.offsetId
+            <span class="property-type">number</span>
+        </dt>
+        <dd>Fetch messages starting from this message ID.</dd>
+
+        <dt>payload.maxId
+            <span class="property-type">number</span>
+        </dt>
+        <dd>Fetch messages with IDs less than or equal to this value.</dd>
+
+        <dt>payload.minId
+            <span class="property-type">number</span>
+        </dt>
+        <dd>Fetch messages with IDs greater than or equal to this value.</dd>
+
+        <dt>payload.addOffset
+            <span class="property-type">number</span>
+        </dt>
+        <dd>An additional offset to apply when retrieving messages.</dd>
+
+        <dt>payload.search
+            <span class="property-type">string</span>
+        </dt>
+        <dd>Filters messages containing the specified search term.</dd>
+
+        <dt>payload.filter
+            <span class="property-type">object</span>
+        </dt>
+        <dd>Applies a specific message filter (e.g., photos, videos, documents).</dd>
+
+        <dt>payload.filters
+            <span class="property-type">array</span>
+        </dt>
+        <dd>Applies multiple message filters using Telegram API filter classes (e.g., <code>Api.InputMessagesFilterPhotos</code>).</dd>
+
+        <dt>payload.reverse
+            <span class="property-type">boolean</span>
+        </dt>
+        <dd>Retrieves messages in reverse order if set to <code>true</code>. Default is <code>false</code>.</dd>
+
+        <dt>payload.replyTo
+            <span class="property-type">number</span>
+        </dt>
+        <dd>Fetches messages replying to the specified message ID.</dd>
+
+        <dt>payload.scheduled
+            <span class="property-type">boolean</span>
+        </dt>
+        <dd>Includes scheduled messages if set to <code>true</code>.</dd>
+    </dl>
+
+    <h3>Outputs</h3>
+    <dl class="message-properties">
+        <dt>payload.messages
+            <span class="property-type">object</span>
+        </dt>
+        <dd>An object containing messages, where keys are message IDs and values are message details.</dd>
+    </dl>
+
+    <h3>Details</h3>
+    <p>The <b>iter-messages</b> node provides a flexible way to retrieve messages from a Telegram chat or user. It allows advanced configurations such as filtering messages by type, searching for specific terms, and paginating results using offsets and IDs.</p>
+    
+    <p>The node also handles cases where a chat username needs to be resolved into an entity or peer ID. It supports using multiple filters in conjunction, enabling precise control over the messages to process.</p>
+
+    <h3>Example</h3>
+    <pre>
+    {
+        "payload": {
+            "chatId": "@examplechannel",
+            "limit": 50,
+            "search": "announcement",
+            "filters": ["InputMessagesFilterPhotos"]
+        }
+    }
+    </pre>
+    <p>This input retrieves up to 50 messages containing the term "announcement" and filters them to include only photos from the specified channel.</p>
+
+    <h3>Error Handling</h3>
+    <p>If an error occurs during message retrieval (e.g., invalid chat ID or API errors), the node logs an error message and does not return a payload.</p>
+
+    <h3>Configuration</h3>
+    <p>The node can use a globally configured Telegram client or a client instance provided in the message payload. Ensure the client has access to the specified chat or user.</p>
+</script>

@@ -1,0 +1,212 @@
+<script type="text/javascript">
+    RED.nodes.registerType('iter-dialogs', {
+        category: 'telegram',
+        color: '#32a3e0',
+        defaults: {
+            name: { value: '' },
+            config: { type: 'config', required: true },
+            limit: { value: "" },
+            offsetDate: { value: ""},
+            offsetId: { value: "" },
+            ignorePinned: { value: false },
+            ignoreMigrated: { value: false },
+            folder: { value: 0 },
+            archived: { value: "" },
+        },
+        inputs: 1,
+        outputs: 1,
+        paletteLabel: 'Iterate Dialogs',
+        label: function () {
+            return this.name || 'Iterate Dialogs';
+        },
+    });
+</script>
+
+<script type="text/html" data-template-name="iter-dialogs">
+    <div class="form-row">
+        <label for="node-input-name">
+            <i class="fa fa-tag"></i> Name
+        </label>
+        <input
+            type="text"
+            id="node-input-name"
+            placeholder="Name"
+            style="width: 60%"
+            ng-model="name"
+        />
+    </div>
+    <div class="form-row">
+        <label for="node-input-config">
+            <i class="fa fa-tag"></i> Config
+        </label>
+        <input
+            type="text"
+            id="node-input-config"
+            placeholder="Config"
+            style="width: 60%"
+            ng-model="config"
+        />
+    </div>
+    <div class="form-row">
+        <label for="node-input-limit">
+            <i class="fa fa-tag"></i> Limit
+        </label>
+        <input
+            type="text"
+            id="node-input-limit"
+            placeholder="Limit"
+            style="width: 60%"
+            ng-model="limit"
+        />
+    </div>
+    <div class="form-row">
+        <label for="node-input-offsetDate">
+            <i class="fa fa-tag"></i> Offset Date
+        </label>
+        <input
+            type="datetime-local"
+            id="node-input-offsetDate"
+            placeholder="Offset Date"
+            style="width: 60%"
+            ng-model="offsetDate"
+        />
+    </div>
+    <div class="form-row">
+        <label for="node-input-offsetId">
+            <i class="fa fa-tag"></i> Offset ID
+        </label>
+        <input
+            type="text"
+            id="node-input-offsetId"
+            placeholder="Offset ID"
+            style="width: 60%"
+            ng-model="offsetId"
+        />
+    </div>
+    <div class="form-row">
+        <label for="node-input-ignorePinned">
+            <i class="fa fa-tag"></i> Ignore Pinned
+        </label>
+        <input
+            type="checkbox"
+            id="node-input-ignorePinned"
+            ng-model="ignorePinned"
+        />
+    </div>
+    <div class="form-row">
+        <label for="node-input-ignoreMigrated">
+            <i class="fa fa-tag"></i> Ignore Migrated
+        </label>
+        <input
+            type="checkbox"
+            id="node-input-ignoreMigrated"
+            ng-model="ignoreMigrated"
+        />
+    </div>
+    <div class="form-row">
+        <label for="node-input-folder">
+            <i class="fa fa-tag"></i> Folder
+        </label>
+        <input
+            type="text"
+            id="node-input-folder"
+            placeholder="Folder"
+            style="width: 60%"
+            ng-model="folder"
+        />
+    </div>
+    <div class="form-row">
+        <label for="node-input-archived">
+            <i class="fa fa-tag"></i> Archived
+        </label>
+        <input
+            type="checkbox"
+            id="node-input-archived"
+            ng-model="archived"
+        />
+    </div>
+</script>
+
+<script type="text/html" data-help-name="iter-dialogs">
+    <p>The <b>iter-dialogs</b> node retrieves a list of Telegram dialogs (chats, channels, or groups) by iterating through them using the Telegram API.</p>
+
+    <h3>Inputs</h3>
+    <dl class="message-properties">
+        <dt>payload.client
+            <span class="property-type">object</span>
+        </dt>
+        <dd>An optional Telegram client instance if not configured globally.</dd>
+
+        <dt>payload.limit
+            <span class="property-type">number</span>
+        </dt>
+        <dd>Limits the number of dialogs to retrieve. Default is no limit.</dd>
+
+        <dt>payload.offsetDate
+            <span class="property-type">string | number</span>
+        </dt>
+        <dd>Fetch dialogs starting from this date. Provide a UNIX timestamp or a date string.</dd>
+
+        <dt>payload.offsetId
+            <span class="property-type">number</span>
+        </dt>
+        <dd>Fetch dialogs starting from this message ID.</dd>
+
+        <dt>payload.offsetPeer
+            <span class="property-type">object</span>
+        </dt>
+        <dd>The peer object to start retrieving dialogs from.</dd>
+
+        <dt>payload.ignorePinned
+            <span class="property-type">boolean</span>
+        </dt>
+        <dd>Ignores pinned dialogs if set to <code>true</code>. Default is <code>false</code>.</dd>
+
+        <dt>payload.ignoreMigrated
+            <span class="property-type">boolean</span>
+        </dt>
+        <dd>Ignores migrated chats if set to <code>true</code>. Default is <code>false</code>.</dd>
+
+        <dt>payload.folder
+            <span class="property-type">number</span>
+        </dt>
+        <dd>Retrieves dialogs from a specific folder by folder ID.</dd>
+
+        <dt>payload.archived
+            <span class="property-type">boolean</span>
+        </dt>
+        <dd>Includes archived dialogs if set to <code>true</code>. Default is <code>false</code>.</dd>
+    </dl>
+
+    <h3>Outputs</h3>
+    <dl class="message-properties">
+        <dt>payload.dialogs
+            <span class="property-type">object</span>
+        </dt>
+        <dd>An object containing dialogs, where keys are dialog IDs and values are dialog details.</dd>
+    </dl>
+
+    <h3>Details</h3>
+    <p>The <b>iter-dialogs</b> node uses the Telegram API to iterate over all available dialogs. It allows filtering by various parameters, such as the number of dialogs to retrieve (<code>limit</code>), starting date or message (<code>offsetDate</code>, <code>offsetId</code>), and additional flags like <code>ignorePinned</code> or <code>archived</code>.</p>
+    
+    <p>It supports advanced configurations such as folder-specific retrieval and skipping migrated chats, providing granular control over the dialogs to be processed.</p>
+
+    <h3>Example</h3>
+    <pre>
+    {
+        "payload": {
+            "limit": 10,
+            "offsetDate": "2023-12-01T00:00:00Z",
+            "archived": true
+        }
+    }
+    </pre>
+    <p>This input retrieves up to 10 archived dialogs starting from December 1, 2023.</p>
+
+    <h3>Error Handling</h3>
+    <p>If an error occurs during dialog retrieval (e.g., invalid parameters or API limitations), the node logs an error message and does not return a payload.</p>
+
+    <h3>Configuration</h3>
+    <p>The node can use a globally configured Telegram client or a client instance provided in the message payload. Ensure the client has sufficient permissions to access the dialogs.</p>
+</script>
+

@@ -1,0 +1,131 @@
+<script type="text/javascript">
+  RED.nodes.registerType('config',{
+      category: 'config',
+      defaults: {
+          name: { value: '' },
+          api_id: {value:"", required:true},
+          api_hash: {value:"", required:true},
+          session: {value:"", required:true},
+          useIPV6: {value: undefined},
+          timeout: {value: undefined},
+          requestRetries: {value: undefined},
+          connectionRetries: {value: undefined},
+          proxy: {value: undefined},
+          downloadRetries: {value: undefined},
+          retryDelay: {value: undefined},
+          autoReconnect: {value: undefined},
+          sequentialUpdates: {value: undefined},
+          floodSleepThreshold: {value: undefined},
+          deviceModel: {value: undefined},
+          systemVersion: {value: undefined},
+          appVersion: {value: undefined},
+          langCode: {value: undefined},
+          systemLangCode: {value: undefined},
+          useWSS: {value: undefined},
+          maxConcurrentDownloads: {value: undefined},
+          securityChecks: {value: undefined},
+          testServers: {value: undefined}
+      },
+      label: function() {
+          return this.name || "Telegram Client Config";
+      },
+      oneditprepare: function() {
+   
+      }
+  });
+</script>
+
+<script type="text/html" data-template-name="config">
+  <div class="form-row">
+      <label for="node-config-input-name"><i class="icon-tasks"></i>Name</label>
+      <input type="text" id="node-config-input-name" placeholder="Name" style="width:70%" ng-model="node.api_id">
+  </div>
+  <div class="form-row">
+      <label for="node-config-input-api_id"><i class="icon-tasks"></i> API ID</label>
+      <input type="text" id="node-config-input-api_id" placeholder="Enter API ID" style="width:70%" ng-model="node.api_id">
+  </div>
+  <div class="form-row">
+      <label for="node-config-input-api_hash"><i class="icon-tasks"></i> API Hash</label>
+      <input type="text" id="node-config-input-api_hash" placeholder="Enter API Hash" style="width:70%" ng-model="node.api_hash">
+  </div>
+  <div class="form-row">
+      <label for="node-config-input-session"><i class="icon-tasks"></i> Session</label>
+      <input type="text" id="node-config-input-session" placeholder="Enter Session" style="width:70%" ng-model="node.session">
+  </div>
+  <div class="form-row">
+      <label for="node-config-input-useIPV6"><i class="icon-tasks"></i> Use IPV6</label>
+      <input type="checkbox" id="node-config-input-useIPV6" ng-model="node.useIPV6">
+  </div>
+  <div class="form-row">
+      <label for="node-config-input-timeout"><i class="icon-tasks"></i> Timeout</label>
+      <input type="number" id="node-config-input-timeout" placeholder="Enter Timeout" style="width:70%" ng-model="node.timeout">
+  </div>
+  <div class="form-row">
+      <label for="node-config-input-requestRetries"><i class="icon-tasks"></i> Request Retries</label>
+      <input type="number" id="node-config-input-requestRetries" placeholder="Enter Request Retries" style="width:70%" ng-model="node.requestRetries">
+  </div>
+  <div class="form-row">
+      <label for="node-config-input-connectionRetries"><i class="icon-tasks"></i> Connection Retries</label>
+      <input type="number" id="node-config-input-connectionRetries" placeholder="Enter Connection Retries" style="width:70%" ng-model="node.connectionRetries">
+  </div>
+  <div class="form-row">
+      <label for="node-config-input-proxy"><i class="icon-tasks"></i> Proxy</label>
+      <input type="text" id="node-config-input-proxy" placeholder="Enter Proxy" style="width:70%" ng-model="node.proxy">
+  </div>
+  <div class="form-row">
+      <label for="node-config-input-downloadRetries"><i class="icon-tasks"></i> Download Retries</label>
+      <input type="number" id="node-config-input-downloadRetries" placeholder="Enter Download Retries" style="width:70%" ng-model="node.downloadRetries">
+  </div>
+  <div class="form-row">
+      <label for="node-config-input-retryDelay"><i class="icon-tasks"></i> Retry Delay</label>
+      <input type="number" id="node-config-input-retryDelay" placeholder="Enter Retry Delay" style="width:70%" ng-model="node.retryDelay">
+  </div>
+  <div class="form-row">
+      <label for="node-config-input-autoReconnect"><i class="icon-tasks"></i> Auto Reconnect</label>
+      <input type="checkbox" id="node-config-input-autoReconnect" ng-model="node.autoReconnect">
+  </div>
+  <div class="form-row">
+      <label for="node-config-input-sequentialUpdates"><i class="icon-tasks"></i> Sequential Updates</label>
+      <input type="checkbox" id="node-config-input-sequentialUpdates" ng-model="node.sequentialUpdates">
+  </div>
+  <div class="form-row">
+      <label for="node-config-input-floodSleepThreshold"><i class="icon-tasks"></i> Flood Sleep Threshold</label>
+      <input type="number" id="node-config-input-floodSleepThreshold" placeholder="Enter Flood Sleep Threshold" style="width:70%" ng-model="node.floodSleepThreshold">
+  </div>
+  <div class="form-row">
+      <label for="node-config-input-deviceModel"><i class="icon-tasks"></i> Device Model</label>
+      <input type="text" id="node-config-input-deviceModel" placeholder="Enter Device Model" style="width:70%" ng-model="node.deviceModel">
+  </div>
+  <div class="form-row">
+      <label for="node-config-input-systemVersion"><i class="icon-tasks"></i> System Version</label>
+      <input type="text" id="node-config-input-systemVersion" placeholder="Enter System Version" style="width:70%" ng-model="node.systemVersion">
+  </div>
+  <div class="form-row">
+      <label for="node-config-input-appVersion"><i class="icon-tasks"></i> App Version</label>
+      <input type="text" id="node-config-input-appVersion" placeholder="Enter App Version" style="width:70%" ng-model="node.appVersion">
+  </div>
+  <div class="form-row">
+      <label for="node-config-input-langCode"><i class="icon-tasks"></i> Language Code</label>
+      <input type="text" id="node-config-input-langCode" placeholder="Enter Language Code" style="width:70%" ng-model="node.langCode">
+  </div>
+  <div class="form-row">
+      <label for="node-config-input-systemLangCode"><i class="icon-tasks"></i> System Language Code</label>
+      <input type="text" id="node-config-input-systemLangCode" placeholder="Enter System Language Code" style="width:70%" ng-model="node.systemLangCode">
+  </div>
+  <div class="form-row">
+      <label for="node-config-input-useWSS"><i class="icon-tasks"></i> Use WSS</label>
+      <input type="checkbox" id="node-config-input-useWSS" ng-model="node.useWSS">
+  </div>
+  <div class="form-row">
+      <label for="node-config-input-maxConcurrentDownloads"><i class="icon-tasks"></i> Max Concurrent Downloads</label>
+      <input type="number" id="node-config-input-maxConcurrentDownloads" placeholder="Enter Max Concurrent Downloads" style="width:70%" ng-model="node.maxConcurrentDownloads">
+  </div>
+  <div class="form-row">
+      <label for="node-config-input-securityChecks"><i class="icon-tasks"></i> Security Checks</label>
+      <input type="checkbox" id="node-config-input-securityChecks" ng-model="node.securityChecks">
+  </div>
+  <div class="form-row">
+      <label for="node-config-input-testServers"><i class="icon-tasks"></i> Test Servers</label>
+      <input type="checkbox" id="node-config-input-testServers" ng-model="node.testServers">
+  </div>
+</script>

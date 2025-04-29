@@ -1,0 +1,128 @@
+<script type="text/javascript">
+    RED.nodes.registerType('receiver', {
+      category: 'telegram-account',
+      color: '#229ED9',
+      icon: 'tg.png',
+      align:"right",
+      defaults: {
+        name: { value: '' },
+        config: { type: 'config', required: false },
+        ignore: { value:""}
+      },
+      inputs: 1,
+      outputs: 1,
+      label: function () {
+        return this.name || 'Receiver';
+      },
+      
+    });
+</script>
+
+<script type="text/html" data-template-name="receiver">
+    <div class="form-row">
+      <label for="node-input-name">
+        <i class="fa fa-tag"></i> Name
+      </label>
+      <input
+        type="text"
+        id="node-input-name"
+        placeholder="Name"
+        style="width: 60%"
+      />
+    </div>
+    <div class="form-row">
+      <label for="node-input-config">
+        <i class="fa fa-tag"></i> Config
+      </label>
+      <input
+        type="text"
+        id="node-input-config"
+        placeholder="Config"
+        style="width: 60%"
+      />
+    </div>
+    <div class="form-row">
+      <label for="node-input-ignore">
+        <i class="fa fa-tag"></i> Config
+      </label>
+      <textarea
+        type="text"
+        id="node-input-ignore"
+        placeholder="Config"
+        style="width: 60%"
+      ></textarea>
+    </div>
+  </script>
+
+  <script type="text/html" data-help-name="receiver">
+    <p>The <b>receiver</b> node listens for incoming Telegram messages and forwards them as output messages in Node-RED. It supports filtering messages based on sender IDs to ignore specific users.</p>
+
+    <h3>Inputs</h3>
+    <p>This node does not take any direct inputs. It listens to all incoming messages from the configured Telegram client.</p>
+
+    <h3>Outputs</h3>
+    <dl class="message-properties">
+        <dt>payload.update
+            <span class="property-type">object</span>
+        </dt>
+        <dd>The raw Telegram update object containing details about the incoming message, sender, chat, and metadata.</dd>
+    </dl>
+
+    <h3>Configuration</h3>
+    <dl class="message-properties">
+        <dt>Telegram Configuration
+            <span class="property-type">node</span>
+        </dt>
+        <dd>A configured Telegram client node to receive messages. Ensure the client is authenticated and has necessary permissions.</dd>
+
+        <dt>Ignore List
+            <span class="property-type">string</span>
+        </dt>
+        <dd>A newline-separated list of user IDs to ignore. Messages from these users will not trigger the output.</dd>
+    </dl>
+
+    <h3>Details</h3>
+    <p>The <b>receiver</b> node uses the Telegram client to listen for all new messages in real-time. It emits a message to the next connected Node-RED node whenever a new Telegram message is received, provided the sender's user ID is not in the ignore list.</p>
+
+    <h3>Example</h3>
+    <pre>
+    {
+        "payload": {
+            "update": {
+                "message": {
+                    "message": "Hello, bot!",
+                    "sender": {
+                        "id": 123456789,
+                        "username": "exampleuser"
+                    },
+                    "chat": {
+                        "id": 987654321,
+                        "type": "private"
+                    }
+                }
+            }
+        }
+    }
+    </pre>
+    <p>In this example, the node outputs the raw Telegram update object when a user sends the message "Hello, bot!" to the Telegram bot.</p>
+
+    <h3>Error Handling</h3>
+    <p>If the Telegram client encounters an authentication issue or configuration error, the node logs an error message and stops listening for messages.</p>
+
+    <h3>Advanced Usage</h3>
+    <p>By configuring the <b>Ignore List</b>, you can filter out messages from specific users. For example:</p>
+    <pre>
+    123456789
+    987654321
+    </pre>
+    <p>In this case, messages from user IDs <code>123456789</code> and <code>987654321</code> will be ignored.</p>
+
+    <h3>Notes</h3>
+    <ul>
+        <li>Ensure the Telegram bot has sufficient permissions to receive messages in the configured chat or channel.</li>
+        <li>The <b>Ignore List</b> only filters messages based on the sender's user ID.</li>
+        <li>For advanced filtering based on message content, consider chaining this node with additional processing nodes in Node-RED.</li>
+    </ul>
+</script>
+
+

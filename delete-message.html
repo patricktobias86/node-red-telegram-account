@@ -1,0 +1,96 @@
+<script type="text/javascript">
+    RED.nodes.registerType('delete-message', {
+      category: 'telegram-account',
+      color: '#FF5733',
+      icon: 'tg.png',
+      align: 'right',
+      defaults: {
+        name: { value: '' },
+        config: { type: 'config', required: false },
+      },
+      inputs: 1,
+      outputs: 1,
+      label: function () {
+        return this.name || 'Delete Message';
+      },
+    });
+</script>
+
+<script type="text/html" data-template-name="delete-message">
+    <div class="form-row">
+      <label for="node-input-name">
+        <i class="fa fa-tag"></i> Name
+      </label>
+      <input
+        type="text"
+        id="node-input-name"
+        placeholder="Name"
+        style="width: 60%"
+      />
+    </div>
+    <div class="form-row">
+      <label for="node-input-config">
+        <i class="fa fa-gear"></i> Config
+      </label>
+      <input
+        type="hidden"
+        id="node-input-config"
+        placeholder="Config"
+        style="width: 60%"
+      />
+    </div>
+  </script>
+
+
+  <script type="text/html" data-help-name="delete-message">
+    <p>The <b>delete-message</b> node allows you to delete messages from a Telegram chat. It supports deleting multiple messages at once and provides an option to revoke messages for all chat participants.</p>
+
+    <h3>Inputs</h3>
+    <dl class="message-properties">
+        <dt>payload.chatId
+            <span class="property-type">string</span>
+        </dt>
+        <dd>The ID or username of the chat from which the messages will be deleted. Use "me" for personal chats.</dd>
+        
+        <dt>payload.messageIds
+            <span class="property-type">number | array</span>
+        </dt>
+        <dd>The ID or an array of IDs of the messages to be deleted.</dd>
+        
+        <dt>payload.revoke
+            <span class="property-type">boolean</span>
+        </dt>
+        <dd>If true, the messages will be deleted for all participants in the chat (revoke). Defaults to true.</dd>
+        
+        <dt>payload.client
+            <span class="property-type">object</span>
+        </dt>
+        <dd>An optional Telegram client instance if not configured globally.</dd>
+    </dl>
+
+    <h3>Outputs</h3>
+    <dl class="message-properties">
+        <dt>payload
+            <span class="property-type">object</span>
+        </dt>
+        <dd>The response from the Telegram API, confirming the deletion.</dd>
+    </dl>
+
+    <h3>Details</h3>
+    <p>The <b>delete-message</b> node uses the Telegram API to delete messages from a specified chat. It can delete a single message or multiple messages at once. If the <code>revoke</code> parameter is set to true, the messages will be removed for all participants, not just the sender.</p>
+
+    <h3>Example</h3>
+    <pre>
+    {
+        "payload": {
+            "chatId": "@example_user",
+            "messageIds": [12345, 12346],
+            "revoke": true
+        }
+    }
+    </pre>
+    <p>This input deletes the messages with IDs 12345 and 12346 from the chat with the user <code>@example_user</code>, revoking them for all participants.</p>
+
+    <h3>Configuration</h3>
+    <p>The node can use a globally configured Telegram client or a client instance provided in the message payload. Ensure that the client has the necessary permissions to delete messages from the specified chat.</p>
+</script>

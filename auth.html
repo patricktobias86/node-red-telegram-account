@@ -1,0 +1,138 @@
+<script type="text/javascript">
+    RED.nodes.registerType('auth', {
+        category: 'telegram-account',
+        color: '#a6bbcf',
+        defaults: {
+            api_id: { value: "", required: true },
+            api_hash: { value: "", required: true },
+            phoneNumber: { value: "", required: true },
+            password: { value: "" },
+        },
+        inputs: 1,
+        outputs: 1,
+        icon: "font-awesome/fa-lock",
+        label: function () {
+            return this.name || "Telegram Auth";
+        },
+        oneditprepare: function () {
+            // Инициализация значений
+            $("#node-input-api_id").val(this.api_id || "");
+            $("#node-input-api_hash").val(this.api_hash || "");
+            $("#node-input-phoneNumber").val(this.phoneNumber || "");
+            $("#node-input-password").val(this.password || "");
+        },
+        oneditsave: function () {
+            // Сохранение значений
+            this.api_id = $("#node-input-api_id").val();
+            this.api_hash = $("#node-input-api_hash").val();
+            this.phoneNumber = $("#node-input-phoneNumber").val();
+            this.password = $("#node-input-password").val();
+        },
+    });
+</script>
+
+<script type="text/html" data-template-name="auth">
+<div class="form-row">
+    <label for="node-input-api_id">
+        <i class="fa fa-key"></i> API ID
+    </label>
+    <input type="text" id="node-input-api_id" placeholder="Enter your API ID">
+</div>
+
+<div class="form-row">
+    <label for="node-input-api_hash">
+        <i class="fa fa-lock"></i> API Hash
+    </label>
+    <input type="text" id="node-input-api_hash" placeholder="Enter your API Hash">
+</div>
+
+<div class="form-row">
+    <label for="node-input-phoneNumber">
+        <i class="fa fa-phone"></i> Phone Number
+    </label>
+    <input type="text" id="node-input-phoneNumber" placeholder="Enter your phone number">
+</div>
+
+<div class="form-row">
+    <label for="node-input-password">
+        <i class="fa fa-unlock-alt"></i> Password (optional)
+    </label>
+    <input type="password" id="node-input-password" placeholder="Enter your password (if any)">
+</div>
+
+<p>
+    <strong>Note:</strong> This configuration is required for connecting to the Telegram API and starting a session.
+</p>
+</script>
+
+
+<script type="text/html" data-help-name="auth">
+    <p>The <b>auth</b> node facilitates Telegram API authentication using the <code>telegram</code> library. It allows users to authenticate a session and retrieve a stringSession for future use.</p>
+
+    <h3>Inputs</h3>
+    <dl class="message-properties">
+        <dt>payload.api_id
+            <span class="property-type">number | string</span>
+        </dt>
+        <dd>The Telegram API ID. Required for authentication.</dd>
+        
+        <dt>payload.api_hash
+            <span class="property-type">string</span>
+        </dt>
+        <dd>The Telegram API hash. Required for authentication.</dd>
+        
+        <dt>payload.phoneNumber
+            <span class="property-type">string</span>
+        </dt>
+        <dd>The phone number associated with the Telegram account.</dd>
+        
+        <dt>payload.password
+            <span class="property-type">string</span>
+        </dt>
+        <dd>The password for two-factor authentication (if enabled on the Telegram account).</dd>
+    </dl>
+
+    <h3>Outputs</h3>
+    <dl class="message-properties">
+        <dt>topic
+            <span class="property-type">string</span>
+        </dt>
+        <dd>
+            - <b>"auth_success"</b>: Authentication was successful.  
+            - <b>"auth_error"</b>: An error occurred during authentication.
+        </dd>
+
+        <dt>payload
+            <span class="property-type">object</span>
+        </dt>
+        <dd>
+            For <b>"auth_success"</b>:  
+            <ul>
+                <li><code>payload.stringSession</code>: The generated session string.</li>
+                <li><code>payload.message</code>: Success message.</li>
+            </ul>
+            For <b>"auth_error"</b>:  
+            <ul>
+                <li><code>payload.error</code>: The error message describing the issue.</li>
+            </ul>
+        </dd>
+    </dl>
+
+    <h3>Details</h3>
+    <p>To use the <b>auth</b> node, pass the required API credentials and phone number as part of the input message payload. The node will initiate the Telegram authentication flow. If a two-factor password is required, include it in the <code>payload.password</code>.</p>
+
+    <p>The node temporarily stores the phone code resolver in the flow context under the key <code>phoneCode</code>. This allows subsequent nodes to resolve the phone code using a separate input mechanism, such as user interaction.</p>
+
+    <h3>Example</h3>
+    <pre>
+    {
+        "payload": {
+            "api_id": 123456,
+            "api_hash": "your_api_hash",
+            "phoneNumber": "+123456789",
+            "password": "your_password"
+        }
+    }
+    </pre>
+    <p>This example input payload initiates the authentication process. Upon receiving the phone code, it should be resolved using a dedicated node or interface.</p>
+</script>

@@ -1,0 +1,32 @@
+{
+  "name": "node-red-telegram-account",
+  "version": "1.0.5-custom",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "npm install /home/user/Desktop/node-red-telegram-account -g & node-red"
+  },
+  "keywords": [
+    "node-red",
+    "telegram"
+  ],
+  "author": "borovlioff",
+  "license": "MIT",
+  "node-red": {
+    "nodes": {
+      "telegram-account-auth": "auth.js",
+      "telegram-account-config": "config.js",
+      "telegram-account-receiver": "receiver.js",
+      "telegram-account-command": "command.js",
+      "telegram-account-send-message": "send-message.js",
+      "telegram-account-send-file": "send-file.js",
+      "telegram-account-entity": "get-entity.js",
+      "telegram-account-delete-message": "delete-message.js",
+      "telegram-account-iter-dialog": "iter-dialogs.js",
+      "telegram-account-iter-messages": "iter-messages.js"
+    }
+  },
+  "dependencies": {
+    "telegram": "^2.17.10"
+  }
+}

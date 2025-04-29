@@ -1,0 +1,135 @@
+<script type="text/javascript">
+    RED.nodes.registerType('command', {
+      category: 'telegram-account',
+      color: '#229ED9',
+      icon: 'tg.png',
+      align:"right",
+      defaults: {
+        name: { value: '' },
+        config: { type: 'config', required: false },
+        command: { value: "", required:true },
+        regex:{ value:false }
+      },
+      inputs: 1,
+      outputs: 1,
+      label: function () {
+        return this.name || 'Command';
+      },
+      
+    });
+</script>
+
+<script type="text/html" data-template-name="command">
+    <div class="form-row">
+      <label for="node-input-name">
+        <i class="fa fa-tag"></i> Name
+      </label>
+      <input
+        type="text"
+        id="node-input-name"
+        placeholder="Name"
+        style="width: 60%"
+      />
+    </div>
+    <div class="form-row">
+      <label for="node-input-config">
+        <i class="fa fa-tag"></i> Config
+      </label>
+      <input
+        type="text"
+        id="node-input-config"
+        placeholder="Config"
+        style="width: 60%"
+      />
+    </div>
+
+    <div class="form-row">
+        <label for="node-input-command">
+          <i class="fa fa-tag"></i> Message
+        </label>
+        <input type="text" id="node-input-command" placeholder="Message">
+    </div>
+
+    <div class="form-row">
+      <label for="regex">
+        <i class="fa fa-cog"></i><span>Regular expression</span>
+      </label>
+      <input type="checkbox" style="display: inline; width: 22px;vertical-align: top;" id="node-input-regex">
+    </div>
+  </script>
+
+  <script type="text/html" data-help-name="command">
+    <p>The <b>command</b> node listens for specific commands or patterns in Telegram messages and triggers further processing when a match is found. It supports both exact matches and regex-based pattern matching.</p>
+
+    <h3>Inputs</h3>
+    <p>This node does not take any direct inputs. Instead, it listens for incoming messages from the Telegram bot or user.</p>
+
+    <h3>Outputs</h3>
+    <dl class="message-properties">
+        <dt>payload.update
+            <span class="property-type">object</span>
+        </dt>
+        <dd>The raw Telegram update object, containing the details of the matched message, including text, sender, chat ID, and other metadata.</dd>
+    </dl>
+
+    <h3>Configuration</h3>
+    <dl class="message-properties">
+        <dt>Command
+            <span class="property-type">string</span>
+        </dt>
+        <dd>The text or pattern to match against incoming messages. For example, <code>/start</code> or <code>/help</code>.</dd>
+
+        <dt>Regex
+            <span class="property-type">boolean</span>
+        </dt>
+        <dd>If checked, treats the <b>Command</b> field as a regular expression. This allows for advanced pattern matching (e.g., <code>^/command\\s*</code>).</dd>
+
+        <dt>Telegram Configuration
+            <span class="property-type">node</span>
+        </dt>
+        <dd>A configured Telegram client node to listen for messages. Ensure the client has the necessary permissions and is correctly authenticated.</dd>
+    </dl>
+
+    <h3>Details</h3>
+    <p>The <b>command</b> node integrates with the Telegram API to monitor incoming messages in real time. When a message matches the configured command or regex, the node outputs the Telegram update object for further processing. This is particularly useful for creating bots that respond to specific commands.</p>
+
+    <h3>Example</h3>
+    <pre>
+    {
+        "payload": {
+            "update": {
+                "message": {
+                    "message": "/start",
+                    "sender": {
+                        "id": 123456789,
+                        "username": "exampleuser"
+                    },
+                    "chat": {
+                        "id": 987654321,
+                        "type": "private"
+                    }
+                }
+            }
+        }
+    }
+    </pre>
+    <p>This example output is triggered when the bot receives the <code>/start</code> command. The <code>update</code> object contains metadata about the message, sender, and chat.</p>
+
+    <h3>Error Handling</h3>
+    <p>If the Telegram client fails to authenticate or there is an error in the configuration, the node logs an error message and stops functioning.</p>
+
+    <h3>Advanced Usage</h3>
+    <p>By enabling the <b>Regex</b> option, you can create dynamic commands or match patterns such as:</p>
+    <ul>
+        <li><code>^/command\\s*</code>: Matches the command followed by optional whitespace.</li>
+        <li><code>^/start|/help$</code>: Matches either <code>/start</code> or <code>/help</code>.</li>
+    </ul>
+    <p>This makes the <b>command</b> node versatile for building complex Telegram bot functionality.</p>
+
+    <h3>Notes</h3>
+    <ul>
+        <li>Ensure the Telegram bot has sufficient permissions to receive messages in the configured chat or channel.</li>
+        <li>Regular expressions should be carefully tested to avoid unintended matches or errors.</li>
+    </ul>
+</script>
+

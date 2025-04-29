@@ -1,0 +1,87 @@
+<script type="text/javascript">
+    RED.nodes.registerType('get-entity', {
+        category: 'telegram-account',
+        color: '#229ED9',
+        icon: 'tg.png',
+        align: "right",
+        defaults: {
+            name: { value: '' },
+            config: { type: 'config', required: false },
+        },
+        inputs: 1,
+        outputs: 1,
+        label: function () {
+            return this.name || 'Get Entity';
+        }
+    });
+</script>
+
+<script type="text/html" data-template-name="get-entity">
+    <div class="form-row">
+        <label for="node-input-name">
+            <i class="fa fa-tag"></i> Name
+        </label>
+        <input
+            type="text"
+            id="node-input-name"
+            placeholder="Name"
+            style="width: 60%"
+        />
+    </div>
+    <div class="form-row">
+        <label for="node-input-config">
+            <i class="fa fa-tag"></i> Config
+        </label>
+        <input
+            type="text"
+            id="node-input-config"
+            placeholder="Config"
+            style="width: 60%"
+        />
+    </div>
+</script>
+
+<script type="text/html" data-help-name="get-entity">
+    <p>The <b>get-entity</b> node retrieves information about a Telegram entity (e.g., user, chat, or channel) using its identifier or URL.</p>
+
+    <h3>Inputs</h3>
+    <dl class="message-properties">
+        <dt>payload.input
+            <span class="property-type">string</span>
+        </dt>
+        <dd>The identifier (username, user ID, chat ID, or channel ID) or URL of the Telegram entity to retrieve. For example, "123456789", "@example_user", or "https://t.me/example_channel".</dd>
+
+        <dt>payload.client
+            <span class="property-type">object</span>
+        </dt>
+        <dd>An optional Telegram client instance if not configured globally.</dd>
+    </dl>
+
+    <h3>Outputs</h3>
+    <dl class="message-properties">
+        <dt>payload.input
+            <span class="property-type">object</span>
+        </dt>
+        <dd>The retrieved entity object containing details about the user, chat, or channel.</dd>
+    </dl>
+
+    <h3>Details</h3>
+    <p>The <b>get-entity</b> node uses the Telegram API to fetch details about a specified entity. If the input is a Telegram URL (e.g., "https://t.me/example_user"), the node extracts the username or channel name and fetches the corresponding entity. For non-URL inputs, it directly retrieves the entity using the provided identifier.</p>
+
+    <h3>Example</h3>
+    <pre>
+    {
+        "payload": {
+            "input": "https://t.me/example_user"
+        }
+    }
+    </pre>
+    <p>This input retrieves the entity information for the Telegram user <code>example_user</code>.</p>
+
+    <h3>Error Handling</h3>
+    <p>If an error occurs while retrieving the entity (e.g., the identifier is invalid or the entity does not exist), the node logs an error and sends a message with <code>payload.input</code> set to <code>null</code>.</p>
+
+    <h3>Configuration</h3>
+    <p>The node can use a globally configured Telegram client or a client instance provided in the message payload. Ensure the client has the necessary permissions to access the requested entity.</p>
+</script>
+
