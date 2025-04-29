@@ -14,16 +14,16 @@
   "license": "MIT",
   "node-red": {
     "nodes": {
-      "telegram-account-auth": "auth.js",
-      "telegram-account-config": "config.js",
-      "telegram-account-receiver": "receiver.js",
-      "telegram-account-command": "command.js",
-      "telegram-account-send-message": "send-message.js",
-      "telegram-account-send-file": "send-file.js",
-      "telegram-account-entity": "get-entity.js",
-      "telegram-account-delete-message": "delete-message.js",
-      "telegram-account-iter-dialog": "iter-dialogs.js",
-      "telegram-account-iter-messages": "iter-messages.js"
+      "telegram-account-auth": "nodes/auth.js",
+      "telegram-account-config": "nodes/config.js",
+      "telegram-account-receiver": "nodes/receiver.js",
+      "telegram-account-command": "nodes/command.js",
+      "telegram-account-send-message": "nodes/send-message.js",
+      "telegram-account-send-file": "nodes/send-file.js",
+      "telegram-account-entity": "nodes/get-entity.js",
+      "telegram-account-delete-message": "nodes/delete-message.js",
+      "telegram-account-iter-dialog": "nodes/iter-dialogs.js",
+      "telegram-account-iter-messages": "nodes/iter-messages.js"
     }
   },
   "dependencies": {
