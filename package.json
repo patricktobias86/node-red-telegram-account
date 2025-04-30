@@ -7,7 +7,10 @@
     "node-red",
     "telegram"
   ],
-  "repository":"https://github.com/patricktobias86/node-red-telegram-account",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/patricktobias86/node-red-telegram-account.git"
+  },
   "author": {
     "name": "Patrick Tobias",
     "url": "https://github.com/patricktobias86"
@@ -35,8 +38,9 @@
       "telegram-account-promote-admin": "nodes/promote-admin.js"
     }
   },
-  "publishConfig": { 
-    "access": "public"
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org"
   },
   "dependencies": {
     "telegram": "^2.17.10"

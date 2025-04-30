@@ -32,20 +32,20 @@ module.exports = function (RED) {
                             context.set("phoneCode", resolvePhoneCode);
                         })
                     },
-                    onError: (err) => node.error(`Ошибка: ${err.message}`),
+                    onError: (err) => node.error(`Error: ${err.message}`),
                 });
 
-                const stringSession = client.session.save(); // Сохраняем сессию
+                const stringSession = client.session.save(); // Save session
                 node.send({
                     topic: "auth_success",
                     payload: {
                         stringSession,
-                        message: "Авторизация прошла успешно!",
+                        message: "Authorization successful!",
                     },
                 });
                
             } catch (error) {
-                node.error(`Ошибка авторизации: ${error.message}`);
+                node.error(`Authorization error: ${error.message}`);
                 node.send({
                     topic: "auth_error",
                     payload: {

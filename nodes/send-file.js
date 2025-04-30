@@ -57,7 +57,7 @@ module.exports = function (RED) {
                 };
                 
                 
-                // Отправка файлов
+                // Send files
                 const response = await client.sendFile(chatId, params);
                 node.send({
                     payload: response,
