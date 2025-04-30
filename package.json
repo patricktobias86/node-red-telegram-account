@@ -1,6 +1,6 @@
 {
   "name": "@patricktobias86/node-red-telegram-account",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "description": "Node-RED nodes to communicate with GramJS.",
   "main": "nodes/config.js",
   "keywords": [

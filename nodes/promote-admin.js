@@ -9,47 +9,43 @@ module.exports = function (RED) {
         var node = this;
 
         this.on('input', async function (msg) {
-            let chatId = msg.payload.chatId || config.chatId;
-            let userId = msg.payload.userId || config.userId;
-            let rank = msg.payload.rank || config.rank || "Admin";
-            const customRights = msg.payload.adminRights || config.adminRights;
+            const client = msg.payload?.client || this.config.client;
 
-            /** @type {TelegramClient} */
-            const client = msg.payload?.client ? msg.payload.client : this.config.client;
-            let group, user;
+            const chatId = msg.payload.chatId || config.chatId;
+            const userId = msg.payload.userId || config.userId;
+            const rank = msg.payload.rank || config.rank || "Admin";
 
             try {
-                group = chatId[0] === "@" ? await client.getEntity(chatId) : parseID(chatId);
-                user = userId[0] === "@" ? await client.getEntity(userId) : parseID(userId);
+                const group = chatId[0] === "@" ? await client.getEntity(chatId) : parseID(chatId);
+                const user = userId[0] === "@" ? await client.getEntity(userId) : parseID(userId);
 
-                const adminRights = customRights || new Api.ChatAdminRights({
-                    changeInfo: true,
-                    postMessages: true,
-                    editMessages: true,
-                    deleteMessages: true,
-                    banUsers: true,
-                    inviteUsers: true,
-                    pinMessages: true,
-                    addAdmins: true,
-                    manageCall: true,
-                    anonymous: false,
-                    manageTopics: true,
+                const adminRights = new Api.ChatAdminRights({
+                    changeInfo: msg.payload.changeInfo ?? config.changeInfo,
+                    postMessages: msg.payload.postMessages ?? config.postMessages,
+                    editMessages: msg.payload.editMessages ?? config.editMessages,
+                    deleteMessages: msg.payload.deleteMessages ?? config.deleteMessages,
+                    banUsers: msg.payload.banUsers ?? config.banUsers,
+                    inviteUsers: msg.payload.inviteUsers ?? config.inviteUsers,
+                    pinMessages: msg.payload.pinMessages ?? config.pinMessages,
+                    addAdmins: msg.payload.addAdmins ?? config.addAdmins,
+                    manageCall: msg.payload.manageCall ?? config.manageCall,
+                    anonymous: msg.payload.anonymous ?? config.anonymous,
+                    manageTopics: msg.payload.manageTopics ?? config.manageTopics,
                 });
 
                 const result = await client.invoke(new Api.channels.EditAdmin({
                     channel: group,
                     userId: user,
-                    adminRights,
-                    rank,
+                    adminRights: adminRights,
+                    rank: rank,
                 }));
 
-                node.send({ payload: result });
-
+                node.send({ payload: { response: result } });
             } catch (err) {
-                node.error('Error promoting admin: ' + err.message);
+                node.error("Error promoting admin: " + err.message);
             }
         });
     }
 
-    RED.nodes.registerType('promote-admin', PromoteAdmin);
+    RED.nodes.registerType("promote-admin", PromoteAdmin);
 };

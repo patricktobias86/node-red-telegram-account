@@ -10,7 +10,17 @@
             chatId: { value: '' },
             userId: { value: '' },
             rank: { value: 'Admin' },
-            adminRights: { value: '' }, // JSON string of ChatAdminRights
+            changeInfo: { value: true },
+            postMessages: { value: true },
+            editMessages: { value: true },
+            deleteMessages: { value: true },
+            banUsers: { value: true },
+            inviteUsers: { value: true },
+            pinMessages: { value: true },
+            addAdmins: { value: false },
+            manageCall: { value: false },
+            anonymous: { value: false },
+            manageTopics: { value: true }
         },
         inputs: 1,
         outputs: 1,
@@ -18,7 +28,102 @@
             return this.name || 'Promote Admin';
         },
         oneditprepare: function () {
-            // Nothing special here yet — could validate JSON if needed
+            // No extra logic needed
         }
     });
+</script>
+<script type="text/html" data-template-name="promote-admin">
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+        <input type="text" id="node-input-name" placeholder="Name">
+    </div>
+
+    <div class="form-row">
+        <label for="node-input-config"><i class="fa fa-gear"></i> Config</label>
+        <input type="hidden" id="node-input-config">
+    </div>
+
+    <div class="form-row">
+        <label for="node-input-chatId"><i class="fa fa-users"></i> Group Chat ID</label>
+        <input type="text" id="node-input-chatId" placeholder="@groupname or ID">
+    </div>
+
+    <div class="form-row">
+        <label for="node-input-userId"><i class="fa fa-user-plus"></i> User ID</label>
+        <input type="text" id="node-input-userId" placeholder="@username or ID">
+    </div>
+
+    <div class="form-row">
+        <label for="node-input-rank"><i class="fa fa-star"></i> Admin Rank</label>
+        <input type="text" id="node-input-rank" placeholder="e.g. Admin, Moderator">
+    </div>
+
+    <fieldset style="border: 1px solid #ccc; padding: 10px; margin-top: 1rem;">
+        <legend><i class="fa fa-unlock-alt"></i> Admin Rights</legend>
+
+        <div><input type="checkbox" id="node-input-changeInfo"> <label for="node-input-changeInfo">Can change group info</label></div>
+        <div><input type="checkbox" id="node-input-postMessages"> <label for="node-input-postMessages">Can post messages</label></div>
+        <div><input type="checkbox" id="node-input-editMessages"> <label for="node-input-editMessages">Can edit messages</label></div>
+        <div><input type="checkbox" id="node-input-deleteMessages"> <label for="node-input-deleteMessages">Can delete messages</label></div>
+        <div><input type="checkbox" id="node-input-banUsers"> <label for="node-input-banUsers">Can ban users</label></div>
+        <div><input type="checkbox" id="node-input-inviteUsers"> <label for="node-input-inviteUsers">Can invite users</label></div>
+        <div><input type="checkbox" id="node-input-pinMessages"> <label for="node-input-pinMessages">Can pin messages</label></div>
+        <div><input type="checkbox" id="node-input-addAdmins"> <label for="node-input-addAdmins">Can add new admins</label></div>
+        <div><input type="checkbox" id="node-input-manageCall"> <label for="node-input-manageCall">Can manage voice/video chats</label></div>
+        <div><input type="checkbox" id="node-input-anonymous"> <label for="node-input-anonymous">Is anonymous (hidden from group)</label></div>
+        <div><input type="checkbox" id="node-input-manageTopics"> <label for="node-input-manageTopics">Can manage topics</label></div>
+    </fieldset>
+</script>
+<script type="text/html" data-help-name="promote-admin">
+    <p><b>Promote Admin</b> lets you promote a user to admin in a Telegram group or channel using the Telegram MTProto API (via GramJS).</p>
+
+    <h3>Inputs</h3>
+    <dl class="message-properties">
+        <dt>payload.chatId <span class="property-type">string</span></dt>
+        <dd>The group/channel username (e.g., <code>@mygroup</code>) or internal Telegram ID.</dd>
+
+        <dt>payload.userId <span class="property-type">string</span></dt>
+        <dd>The user to promote — as a username (e.g., <code>@someuser</code>) or Telegram ID.</dd>
+
+        <dt>payload.rank <span class="property-type">string</span></dt>
+        <dd>The admin's visible title (e.g. "Moderator", "Editor").</dd>
+
+        <dt>payload.[rightName] <span class="property-type">boolean</span></dt>
+        <dd>Each right can be passed to override the checkbox values at runtime. For example, <code>payload.banUsers</code> = <code>true</code>.</dd>
+    </dl>
+
+    <h3>Admin Rights</h3>
+    <p>These rights are configured via checkboxes in the UI:</p>
+    <ul>
+        <li><code>changeInfo</code> – Can change group/channel info</li>
+        <li><code>postMessages</code> – Can post messages (channel only)</li>
+        <li><code>editMessages</code> – Can edit any message</li>
+        <li><code>deleteMessages</code> – Can delete messages</li>
+        <li><code>banUsers</code> – Can ban or remove users</li>
+        <li><code>inviteUsers</code> – Can invite users</li>
+        <li><code>pinMessages</code> – Can pin/unpin messages</li>
+        <li><code>addAdmins</code> – Can add new admins</li>
+        <li><code>manageCall</code> – Can manage voice/video chats</li>
+        <li><code>anonymous</code> – Acts anonymously (e.g., shows as "Group Admin")</li>
+        <li><code>manageTopics</code> – Can manage discussion topics (forum groups)</li>
+    </ul>
+
+    <h3>Outputs</h3>
+    <dl class="message-properties">
+        <dt>payload.response <span class="property-type">object</span></dt>
+        <dd>The Telegram API response from <code>channels.EditAdmin</code>.</dd>
+    </dl>
+
+    <h3>Example</h3>
+    <pre>
+{
+  "payload": {
+    "chatId": "@mygroup",
+    "userId": "@targetuser",
+    "rank": "Moderator",
+    "banUsers": true,
+    "pinMessages": true
+  }
+}
+    </pre>
 </script>
