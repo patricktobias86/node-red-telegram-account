@@ -36,9 +36,8 @@
     }
   },
   "publishConfig": { 
-    "access": "public",
-    "registry": "https://npm.pkg.github.com/"
-    },
+    "access": "public"
+  },
   "dependencies": {
     "telegram": "^2.17.10"
   }
