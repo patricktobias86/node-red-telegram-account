@@ -1,0 +1,24 @@
+<script type="text/javascript">
+    RED.nodes.registerType('promote-admin', {
+        category: 'telegram-account',
+        color: '#229ED9',
+        icon: 'tg.png',
+        align: "right",
+        defaults: {
+            name: { value: '' },
+            config: { type: 'config', required: false },
+            chatId: { value: '' },
+            userId: { value: '' },
+            rank: { value: 'Admin' },
+            adminRights: { value: '' }, // JSON string of ChatAdminRights
+        },
+        inputs: 1,
+        outputs: 1,
+        label: function () {
+            return this.name || 'Promote Admin';
+        },
+        oneditprepare: function () {
+            // Nothing special here yet — could validate JSON if needed
+        }
+    });
+</script>

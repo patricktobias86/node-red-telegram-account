@@ -23,7 +23,8 @@
       "telegram-account-entity": "nodes/get-entity.js",
       "telegram-account-delete-message": "nodes/delete-message.js",
       "telegram-account-iter-dialog": "nodes/iter-dialogs.js",
-      "telegram-account-iter-messages": "nodes/iter-messages.js"
+      "telegram-account-iter-messages": "nodes/iter-messages.js",
+      "telegram-account-promote-admin": "nodes/promote-admin.js"
     }
   },
   "dependencies": {
