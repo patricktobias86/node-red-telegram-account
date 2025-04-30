@@ -1,8 +1,8 @@
 {
-  "name": "node-red-telegram-account",
+  "name": "patricktobias86/node-red-telegram-account",
   "version": "1.0.5-custom",
   "description": "",
-  "main": "index.js",
+  "main": "nodes/config.js",
   "scripts": {
     "dev": "npm install /home/user/Desktop/node-red-telegram-account -g & node-red"
   },
@@ -10,7 +10,21 @@
     "node-red",
     "telegram"
   ],
-  "author": "borovlioff",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/patricktobias86/node-red-telegram-account.git"
+  },
+  "author": {
+    "name": "Patrick Tobias",
+    "url": "https://github.com/patricktobias86"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "bugs": {
+    "url": "https://github.com/patricktobias86/node-red-telegram-account/issues"
+  },
+  "homepage": "https://github.com/patricktobias86/node-red-telegram-account#readme",
   "license": "MIT",
   "node-red": {
     "nodes": {
