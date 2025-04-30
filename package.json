@@ -1,6 +1,6 @@
 {
   "name": "patricktobias86/node-red-telegram-account",
-  "version": "1.0.5-custom",
+  "version": "1.0.6",
   "description": "",
   "main": "nodes/config.js",
   "scripts": {
