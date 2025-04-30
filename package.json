@@ -41,6 +41,9 @@
       "telegram-account-promote-admin": "nodes/promote-admin.js"
     }
   },
+  "publishConfig": { 
+    "access": "public" 
+    },
   "dependencies": {
     "telegram": "^2.17.10"
   }
