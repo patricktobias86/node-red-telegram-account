@@ -3,9 +3,6 @@
   "version": "1.0.6",
   "description": "",
   "main": "nodes/config.js",
-  "scripts": {
-    "dev": "npm install /home/user/Desktop/node-red-telegram-account -g & node-red"
-  },
   "keywords": [
     "node-red",
     "telegram"
@@ -40,7 +37,7 @@
   },
   "publishConfig": { 
     "access": "public",
-    "registry": "https://npm.pkg.github.com"
+    "registry": "https://npm.pkg.github.com/"
     },
   "dependencies": {
     "telegram": "^2.17.10"
