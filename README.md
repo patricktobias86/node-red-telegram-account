@@ -1,1 +1,1 @@
-Node-red and telegram (gramjs) integration
+### Node-RED nodes to communicate with GramJS.
