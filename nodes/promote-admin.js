@@ -10,10 +10,9 @@ module.exports = function (RED) {
 
         this.on('input', async function (msg) {
             const client = msg.payload?.client || this.config.client;
-
             const chatId = msg.payload.chatId || config.chatId;
             const userId = msg.payload.userId || config.userId;
-            const rank = msg.payload.rank || config.rank || "Admin";
+            const rank = msg.payload.rank || config.rank || "admin";
 
             try {
                 const group = chatId[0] === "@" ? await client.getEntity(chatId) : parseID(chatId);

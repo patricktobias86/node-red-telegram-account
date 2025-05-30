@@ -9,7 +9,7 @@
             config: { type: 'config', required: false },
             chatId: { value: '' },
             userId: { value: '' },
-            rank: { value: 'Admin' },
+            rank: { value: 'admin' },
             changeInfo: { value: true },
             postMessages: { value: true },
             editMessages: { value: true },
@@ -44,7 +44,7 @@
     </div>
 
     <div class="form-row">
-        <label for="node-input-chatId"><i class="fa fa-users"></i> Group Chat ID</label>
+        <label for="node-input-chatId"><i class="fa fa-users"></i> Chat ID</label>
         <input type="text" id="node-input-chatId" placeholder="@groupname or ID">
     </div>
 
@@ -55,24 +55,153 @@
 
     <div class="form-row">
         <label for="node-input-rank"><i class="fa fa-star"></i> Admin Rank</label>
-        <input type="text" id="node-input-rank" placeholder="e.g. Admin, Moderator">
+        <input type="text" id="node-input-rank" placeholder="e.g. admin">
     </div>
 
-    <fieldset style="border: 1px solid #ccc; padding: 10px; margin-top: 1rem;">
-        <legend><i class="fa fa-unlock-alt"></i> Admin Rights</legend>
+<div id="node-input-permissions-container" class="red-ui-treeList" tabindex="0" style="width: 100%; height: 100%;">
+  <div class="red-ui-treeList-container">
+    <div class="red-ui-editableList" style="inset: 0px; position: absolute;">
+      <div class="red-ui-editableList-border red-ui-editableList-container" style="inset: 0px; position: absolute; max-height: none; overflow-y: auto;">
+        <ol class="red-ui-treeList-list red-ui-editableList-list" style="position: static; inset: auto; height: auto;">
+        
+          <li>
+            <div class="red-ui-editableList-item-content">
+              <div class="red-ui-treeList-label">
+                <span class="red-ui-treeList-icon"></span>
+                <span class="red-ui-treeList-icon">
+                  <input class="red-ui-treeList-checkbox" type="checkbox" id="node-input-changeInfo">
+                  <label for="node-input-changeInfo">Can change group info</label>
+                </span>
+              </div>
+            </div>
+          </li>
+          
+          <li>
+            <div class="red-ui-editableList-item-content">
+              <div class="red-ui-treeList-label">
+                <span class="red-ui-treeList-icon"></span>
+                <span class="red-ui-treeList-icon">
+                  <input class="red-ui-treeList-checkbox" type="checkbox" id="node-input-postMessages">
+                  <label for="node-input-postMessages">Can post messages</label>
+                </span>
+              </div>
+            </div>
+          </li>
+          
+          <li>
+            <div class="red-ui-editableList-item-content">
+              <div class="red-ui-treeList-label">
+                <span class="red-ui-treeList-icon"></span>
+                <span class="red-ui-treeList-icon">
+                  <input class="red-ui-treeList-checkbox" type="checkbox" id="node-input-editMessages">
+                  <label for="node-input-editMessages">Can edit messages</label>
+                </span>
+              </div>
+            </div>
+          </li>
+          
+          <li>
+            <div class="red-ui-editableList-item-content">
+              <div class="red-ui-treeList-label">
+                <span class="red-ui-treeList-icon"></span>
+                <span class="red-ui-treeList-icon">
+                  <input class="red-ui-treeList-checkbox" type="checkbox" id="node-input-deleteMessages">
+                  <label for="node-input-deleteMessages">Can delete messages</label>
+                </span>
+              </div>
+            </div>
+          </li>
+          
+          <li>
+            <div class="red-ui-editableList-item-content">
+              <div class="red-ui-treeList-label">
+                <span class="red-ui-treeList-icon"></span>
+                <span class="red-ui-treeList-icon">
+                  <input class="red-ui-treeList-checkbox" type="checkbox" id="node-input-banUsers">
+                  <label for="node-input-banUsers">Can ban users</label>
+                </span>
+              </div>
+            </div>
+          </li>
+          
+          <li>
+            <div class="red-ui-editableList-item-content">
+              <div class="red-ui-treeList-label">
+                <span class="red-ui-treeList-icon"></span>
+                <span class="red-ui-treeList-icon">
+                  <input class="red-ui-treeList-checkbox" type="checkbox" id="node-input-inviteUsers">
+                  <label for="node-input-inviteUsers">Can invite users</label>
+                </span>
+              </div>
+            </div>
+          </li>
+          
+          <li>
+            <div class="red-ui-editableList-item-content">
+              <div class="red-ui-treeList-label">
+                <span class="red-ui-treeList-icon"></span>
+                <span class="red-ui-treeList-icon">
+                  <input class="red-ui-treeList-checkbox" type="checkbox" id="node-input-pinMessages">
+                  <label for="node-input-pinMessages">Can pin messages</label>
+                </span>
+              </div>
+            </div>
+          </li>
+          
+          <li>
+            <div class="red-ui-editableList-item-content">
+              <div class="red-ui-treeList-label">
+                <span class="red-ui-treeList-icon"></span>
+                <span class="red-ui-treeList-icon">
+                  <input class="red-ui-treeList-checkbox" type="checkbox" id="node-input-addAdmins">
+                  <label for="node-input-addAdmins">Can add new admins</label>
+                </span>
+              </div>
+            </div>
+          </li>
+          
+          <li>
+            <div class="red-ui-editableList-item-content">
+              <div class="red-ui-treeList-label">
+                <span class="red-ui-treeList-icon"></span>
+                <span class="red-ui-treeList-icon">
+                  <input class="red-ui-treeList-checkbox" type="checkbox" id="node-input-manageCall">
+                  <label for="node-input-manageCall">Can manage voice/video chats</label>
+                </span>
+              </div>
+            </div>
+          </li>
+          
+          <li>
+            <div class="red-ui-editableList-item-content">
+              <div class="red-ui-treeList-label">
+                <span class="red-ui-treeList-icon"></span>
+                <span class="red-ui-treeList-icon">
+                  <input class="red-ui-treeList-checkbox" type="checkbox" id="node-input-anonymous">
+                  <label for="node-input-anonymous">Is anonymous (hidden from group)</label>
+                </span>
+              </div>
+            </div>
+          </li>
+          
+          <li>
+            <div class="red-ui-editableList-item-content">
+              <div class="red-ui-treeList-label">
+                <span class="red-ui-treeList-icon"></span>
+                <span class="red-ui-treeList-icon">
+                  <input class="red-ui-treeList-checkbox" type="checkbox" id="node-input-manageTopics">
+                  <label for="node-input-manageTopics">Can manage topics</label>
+                </span>
+              </div>
+            </div>
+          </li>
+          
+        </ol>
+      </div>
+    </div>
+  </div>
+</div>
 
-        <div><input type="checkbox" id="node-input-changeInfo"> <label for="node-input-changeInfo">Can change group info</label></div>
-        <div><input type="checkbox" id="node-input-postMessages"> <label for="node-input-postMessages">Can post messages</label></div>
-        <div><input type="checkbox" id="node-input-editMessages"> <label for="node-input-editMessages">Can edit messages</label></div>
-        <div><input type="checkbox" id="node-input-deleteMessages"> <label for="node-input-deleteMessages">Can delete messages</label></div>
-        <div><input type="checkbox" id="node-input-banUsers"> <label for="node-input-banUsers">Can ban users</label></div>
-        <div><input type="checkbox" id="node-input-inviteUsers"> <label for="node-input-inviteUsers">Can invite users</label></div>
-        <div><input type="checkbox" id="node-input-pinMessages"> <label for="node-input-pinMessages">Can pin messages</label></div>
-        <div><input type="checkbox" id="node-input-addAdmins"> <label for="node-input-addAdmins">Can add new admins</label></div>
-        <div><input type="checkbox" id="node-input-manageCall"> <label for="node-input-manageCall">Can manage voice/video chats</label></div>
-        <div><input type="checkbox" id="node-input-anonymous"> <label for="node-input-anonymous">Is anonymous (hidden from group)</label></div>
-        <div><input type="checkbox" id="node-input-manageTopics"> <label for="node-input-manageTopics">Can manage topics</label></div>
-    </fieldset>
 </script>
 <script type="text/html" data-help-name="promote-admin">
     <p><b>Promote Admin</b> lets you promote a user to admin in a Telegram group or channel using the Telegram MTProto API (via GramJS).</p>
@@ -120,7 +249,7 @@
   "payload": {
     "chatId": "@mygroup",
     "userId": "@targetuser",
-    "rank": "Moderator",
+    "rank": "admin",
     "banUsers": true,
     "pinMessages": true
   }
