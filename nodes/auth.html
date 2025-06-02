@@ -1,36 +1,3 @@
-<script type="text/javascript">
-    RED.nodes.registerType('auth', {
-        category: 'telegram-account',
-        color: '#a6bbcf',
-        defaults: {
-            api_id: { value: "", required: true },
-            api_hash: { value: "", required: true },
-            phoneNumber: { value: "", required: true },
-            password: { value: "" },
-        },
-        inputs: 1,
-        outputs: 1,
-        icon: "font-awesome/fa-lock",
-        label: function () {
-            return this.name || "Telegram Auth";
-        },
-        oneditprepare: function () {
-            // Инициализация значений
-            $("#node-input-api_id").val(this.api_id || "");
-            $("#node-input-api_hash").val(this.api_hash || "");
-            $("#node-input-phoneNumber").val(this.phoneNumber || "");
-            $("#node-input-password").val(this.password || "");
-        },
-        oneditsave: function () {
-            // Сохранение значений
-            this.api_id = $("#node-input-api_id").val();
-            this.api_hash = $("#node-input-api_hash").val();
-            this.phoneNumber = $("#node-input-phoneNumber").val();
-            this.password = $("#node-input-password").val();
-        },
-    });
-</script>
-
 <script type="text/html" data-template-name="auth">
 <div class="form-row">
     <label for="node-input-api_id">
@@ -61,78 +28,66 @@
 </div>
 
 <p>
-    <strong>Note:</strong> This configuration is required for connecting to the Telegram API and starting a session.
+    <strong>Note:</strong> These values are used to create a Telegram session string.
 </p>
 </script>
-
-
 <script type="text/html" data-help-name="auth">
-    <p>The <b>auth</b> node facilitates Telegram API authentication using the <code>telegram</code> library. It allows users to authenticate a session and retrieve a stringSession for future use.</p>
+    <p>The <b>auth</b> node facilitates Telegram API authentication using the <code>telegram</code> (GramJS) library. It allows users to authenticate a session and retrieve a <code>stringSession</code> for reuse with other Telegram clients.</p>
 
     <h3>Inputs</h3>
     <dl class="message-properties">
-        <dt>payload.api_id
-            <span class="property-type">number | string</span>
-        </dt>
-        <dd>The Telegram API ID. Required for authentication.</dd>
-        
-        <dt>payload.api_hash
-            <span class="property-type">string</span>
-        </dt>
-        <dd>The Telegram API hash. Required for authentication.</dd>
-        
-        <dt>payload.phoneNumber
-            <span class="property-type">string</span>
-        </dt>
-        <dd>The phone number associated with the Telegram account.</dd>
-        
-        <dt>payload.password
-            <span class="property-type">string</span>
-        </dt>
-        <dd>The password for two-factor authentication (if enabled on the Telegram account).</dd>
+        <dt>payload.api_id <span class="property-type">number | string</span></dt>
+        <dd>The Telegram API ID.</dd>
+
+        <dt>payload.api_hash <span class="property-type">string</span></dt>
+        <dd>The Telegram API hash.</dd>
+
+        <dt>payload.phoneNumber <span class="property-type">string</span></dt>
+        <dd>The phone number of the Telegram account, including country code (e.g. +46701234567).</dd>
+
+        <dt>payload.password <span class="property-type">string</span></dt>
+        <dd>(Optional) The password for two-factor authentication.</dd>
     </dl>
+
+    <h3>Behavior</h3>
+    <p>When triggered, the node starts the login flow by sending a code via SMS or Telegram to the specified phone number. The node will wait for a verification code to be supplied separately.</p>
+    <p>To complete authentication, you must send the code using a function node like this:</p>
+    <pre>
+const code = msg.payload.code;
+const wait = flow.get("waitForCode");
+if (typeof wait === "function") {
+    wait(code);
+    flow.set("waitForCode", null);
+}
+    </pre>
 
     <h3>Outputs</h3>
     <dl class="message-properties">
-        <dt>topic
-            <span class="property-type">string</span>
-        </dt>
+        <dt>topic <span class="property-type">string</span></dt>
         <dd>
-            - <b>"auth_success"</b>: Authentication was successful.  
-            - <b>"auth_error"</b>: An error occurred during authentication.
+            - <b>"auth_success"</b>: Login succeeded.<br>
+            - <b>"auth_error"</b>: Login failed.
         </dd>
 
-        <dt>payload
-            <span class="property-type">object</span>
-        </dt>
+        <dt>payload <span class="property-type">object</span></dt>
         <dd>
-            For <b>"auth_success"</b>:  
             <ul>
-                <li><code>payload.stringSession</code>: The generated session string.</li>
-                <li><code>payload.message</code>: Success message.</li>
-            </ul>
-            For <b>"auth_error"</b>:  
-            <ul>
-                <li><code>payload.error</code>: The error message describing the issue.</li>
+                <li><code>stringSession</code>: The generated session string to reuse in your bots.</li>
+                <li><code>message</code> or <code>error</code>: Additional info.</li>
             </ul>
         </dd>
     </dl>
 
-    <h3>Details</h3>
-    <p>To use the <b>auth</b> node, pass the required API credentials and phone number as part of the input message payload. The node will initiate the Telegram authentication flow. If a two-factor password is required, include it in the <code>payload.password</code>.</p>
-
-    <p>The node temporarily stores the phone code resolver in the flow context under the key <code>phoneCode</code>. This allows subsequent nodes to resolve the phone code using a separate input mechanism, such as user interaction.</p>
-
     <h3>Example</h3>
     <pre>
-    {
-        "payload": {
-            "api_id": 123456,
-            "api_hash": "your_api_hash",
-            "phoneNumber": "+123456789",
-            "password": "your_password"
-        }
+{
+    "payload": {
+        "api_id": "123456",
+        "api_hash": "your_api_hash",
+        "phoneNumber": "+46701234567",
+        "password": "optional_password"
     }
+}
     </pre>
-    <p>This example input payload initiates the authentication process. Upon receiving the phone code, it should be resolved using a dedicated node or interface.</p>
+    <p>Use a separate node to submit the received code after triggering this payload.</p>
 </script>

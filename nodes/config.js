@@ -1,58 +1,54 @@
 const { TelegramClient } = require("telegram");
 const { StringSession } = require("telegram/sessions");
 
+const activeClients = {}; // Cache: session string → connected client
+
 module.exports = function (RED) {
     function TelegramClientConfig(config) {
         RED.nodes.createNode(this, config);
-        this.apiId = config.api_id;
-        this.apiHash = config.api_hash;
-        this.session = new StringSession(config.session);
-        this.useIPV6 = config.useIPV6;
-        this.timeout = config.timeout;
-        this.requestRetries = config.requestRetries;
-        this.connectionRetries = config.connectionRetries;
-        this.proxy = config.proxy;
-        this.downloadRetries = config.downloadRetries;
-        this.retryDelay = config.retryDelay;
-        this.autoReconnect = config.autoReconnect;
-        this.sequentialUpdates = config.sequentialUpdates;
-        this.floodSleepThreshold = config.floodSleepThreshold;
-        this.deviceModel = config.deviceModel;
-        this.systemVersion = config.systemVersion;
-        this.appVersion = config.appVersion;
-        this.langCode = config.langCode;
-        this.systemLangCode = config.systemLangCode;
-        this.useWSS = config.useWSS;
-        this.maxConcurrentDownloads = config.maxConcurrentDownloads;
-        this.securityChecks = config.securityChecks;
-        this.testServers = config.testServers;
+
+        const sessionStr = config.session;
+        const apiId = parseInt(config.api_id);
+        const apiHash = config.api_hash;
+
+        this.session = new StringSession(sessionStr);
+        this.client = null;
+
         const node = this;
 
+        if (activeClients[sessionStr]) {
+            // Reuse existing client
+            this.client = activeClients[sessionStr];
+            node.status({ fill: "green", shape: "dot", text: "Reused existing client" });
+        } else {
+            // Create and connect new client
+            this.client = new TelegramClient(this.session, apiId, apiHash, {
+                connectionRetries: config.connectionRetries || 5,
+                autoReconnect: config.autoReconnect !== false,
+                requestRetries: config.requestRetries || 5,
+            });
 
-        this.client = new TelegramClient(this.session, parseInt(this.apiId), this.apiHash, {
-           
-           
-        });
-
-        try {
             this.client.connect().then(async () => {
-                let isAuthorized = await this.client.isUserAuthorized();
-                if (!isAuthorized) {
-                    node.error(`Session is invalid`);
+                const authorized = await this.client.isUserAuthorized();
+                if (!authorized) {
+                    node.error("Session is invalid");
                 } else {
                     node.status({ fill: "green", shape: "dot", text: "Connected" });
+                    activeClients[sessionStr] = this.client;
                 }
+            }).catch(err => {
+                node.error("Connection error: " + err.message);
             });
-        } catch (err) {
-            node.error('Authorisation error: ' + err.message);
         }
 
-        this.on("close", () => {
-            if (this.client) {
-                this.client.disconnect();
+        this.on("close", async () => {
+            if (this.client && activeClients[sessionStr] === this.client) {
+                await this.client.disconnect();
+                delete activeClients[sessionStr];
                 node.status({ fill: "red", shape: "ring", text: "Disconnected" });
             }
         });
     }
+
     RED.nodes.registerType('config', TelegramClientConfig);
 };
