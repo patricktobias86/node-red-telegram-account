@@ -3,17 +3,15 @@
         category: 'telegram-account',
         color: '#a6bbcf',
         defaults: {
-            api_id: { value: "", required: true },
-            api_hash: { value: "", required: true },
-            phoneNumber: { value: "", required: true },
-            password: { value: "" },
+            api_id: { value: "" },
+            api_hash: { value: "" },
+            phoneNumber: { value: "" },
+            password: { value: "" }
         },
         inputs: 1,
         outputs: 1,
-        icon: "font-awesome/fa-lock",
-        label: function () {
-            return this.name || "telegram auth";
-        },
+        icon: 'tg.png',
+        paletteLabel: 'user auth',
         oneditprepare: function () {
             // Initialize values
             $("#node-input-api_id").val(this.api_id || "");
@@ -77,7 +75,7 @@
         <dd>The Telegram API hash.</dd>
 
         <dt>payload.phoneNumber <span class="property-type">string</span></dt>
-        <dd>The phone number of the Telegram account, including country code (e.g. +46701234567).</dd>
+        <dd>The phone number of the Telegram account, including country code (e.g. +1701234567).</dd>
 
         <dt>payload.password <span class="property-type">string</span></dt>
         <dd>(Optional) The password for two-factor authentication.</dd>

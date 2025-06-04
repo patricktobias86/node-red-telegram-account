@@ -2,6 +2,7 @@
     RED.nodes.registerType('iter-dialogs', {
         category: 'telegram-account',
         color: '#32a3e0',
+        icon: 'tg.png',
         defaults: {
             name: { value: '' },
             config: { type: 'config', required: true },
@@ -15,9 +16,9 @@
         },
         inputs: 1,
         outputs: 1,
-        paletteLabel: 'Iterate Dialogs',
+        paletteLabel: 'iterate dialogs',
         label: function () {
-            return this.name || 'Iterate Dialogs';
+            return this.name || 'iterate dialogs';
         },
     });
 </script>

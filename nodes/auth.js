@@ -7,10 +7,18 @@ module.exports = function (RED) {
         const node = this;
 
         this.on("input", async (msg) => {
-            const api_id = parseInt(msg.payload.api_id || config.api_id);
-            const api_hash = msg.payload.api_hash || config.api_hash;
-            const phoneNumber = msg.payload.phoneNumber || config.phoneNumber;
-            const password = msg.payload.password || config.password;
+
+            const payload = (msg && typeof msg.payload === "object") ? msg.payload : {};
+
+            const api_id = parseInt(payload.api_id || config.api_id);
+            const api_hash = payload.api_hash || config.api_hash;
+            const phoneNumber = payload.phoneNumber || config.phoneNumber;
+            const password = payload.password || config.password;
+
+            if (!api_id || !api_hash || !phoneNumber) {
+                node.error("Missing required API credentials (api_id, api_hash, or phoneNumber).");
+                return;
+            }
 
             const session = new StringSession(""); // always generate a new session
             const client = new TelegramClient(session, api_id, api_hash, {
@@ -37,12 +45,16 @@ module.exports = function (RED) {
 
                 const stringSession = client.session.save();
                 node.send({
-                    topic: "auth_success",
+                    topic: "auth_complete",
                     payload: {
                         stringSession,
-                        message: "Authorization successful!",
-                    },
+                        messages: [
+                            { type: "auth_success", text: "Authorization successful!" },
+                            { type: "session_token", text: "Copy this stringSession to use in other nodes." }
+                        ]
+                    }
                 });
+
                 node.status({ fill: "green", shape: "dot", text: "Authenticated" });
 
             } catch (err) {

@@ -2,6 +2,7 @@
     RED.nodes.registerType('iter-messages', {
         category: 'telegram',
         color: '#32a3e0',
+        icon: 'tg.png',
         defaults: {
             name: { value: '' },
             config: { type: 'config', required: true },
@@ -23,9 +24,9 @@
         },
         inputs: 1,
         outputs: 1,
-        paletteLabel: 'Iterate Messages',
+        paletteLabel: 'iterate messages',
         label: function () {
-            return this.name || 'Iterate Messages';
+            return this.name || 'iterate messages';
         },
         oneditprepare: function(){
             const node = this;
