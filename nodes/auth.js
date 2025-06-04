@@ -7,6 +7,7 @@ module.exports = function (RED) {
         const node = this;
 
         this.on("input", async (msg) => {
+
             const payload = (msg && typeof msg.payload === "object") ? msg.payload : {};
 
             const api_id = parseInt(payload.api_id || config.api_id);
@@ -52,7 +53,7 @@ module.exports = function (RED) {
                             { type: "session_token", text: "Copy this stringSession to use in other nodes." }
                         ]
                     }
-                })
+                });
 
                 node.status({ fill: "green", shape: "dot", text: "Authenticated" });
 
