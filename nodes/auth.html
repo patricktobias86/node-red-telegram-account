@@ -1,3 +1,36 @@
+<script type="text/javascript">
+    RED.nodes.registerType('auth', {
+        category: 'telegram-account',
+        color: '#a6bbcf',
+        defaults: {
+            api_id: { value: "", required: true },
+            api_hash: { value: "", required: true },
+            phoneNumber: { value: "", required: true },
+            password: { value: "" },
+        },
+        inputs: 1,
+        outputs: 1,
+        icon: "font-awesome/fa-lock",
+        label: function () {
+            return this.name || "telegram auth";
+        },
+        oneditprepare: function () {
+            // Initialize values
+            $("#node-input-api_id").val(this.api_id || "");
+            $("#node-input-api_hash").val(this.api_hash || "");
+            $("#node-input-phoneNumber").val(this.phoneNumber || "");
+            $("#node-input-password").val(this.password || "");
+        },
+        oneditsave: function () {
+            // Save values
+            this.api_id = $("#node-input-api_id").val();
+            this.api_hash = $("#node-input-api_hash").val();
+            this.phoneNumber = $("#node-input-phoneNumber").val();
+            this.password = $("#node-input-password").val();
+        },
+    });
+</script>
+
 <script type="text/html" data-template-name="auth">
 <div class="form-row">
     <label for="node-input-api_id">
@@ -31,6 +64,7 @@
     <strong>Note:</strong> These values are used to create a Telegram session string.
 </p>
 </script>
+
 <script type="text/html" data-help-name="auth">
     <p>The <b>auth</b> node facilitates Telegram API authentication using the <code>telegram</code> (GramJS) library. It allows users to authenticate a session and retrieve a <code>stringSession</code> for reuse with other Telegram clients.</p>
 
