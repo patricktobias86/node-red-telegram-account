@@ -44,14 +44,20 @@ module.exports = function (RED) {
                 });
 
                 const stringSession = client.session.save();
+
+                console.log("Sending result to output:", {
+                    stringSession,
+                    messages: [
+                        { type: "auth_success", text: "Authorization successful!" },
+                        { type: "session_token", text: "Copy this stringSession to use in other nodes." }
+                    ]
+                });
+
                 node.send({
-                    topic: "auth_complete",
+                    topic: "auth_success",
                     payload: {
                         stringSession,
-                        messages: [
-                            { type: "auth_success", text: "Authorization successful!" },
-                            { type: "session_token", text: "Copy this stringSession to use in other nodes." }
-                        ]
+                        message: "Authorization successful!"
                     }
                 });
 

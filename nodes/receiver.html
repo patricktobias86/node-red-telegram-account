@@ -1,19 +1,19 @@
 <script type="text/javascript">
     RED.nodes.registerType('receiver', {
-      category: 'telegram-account',
-      color: '#229ED9',
-      icon: 'tg.png',
-      defaults: {
-        name: { value: '' },
-        config: { type: 'config', required: false },
-        ignore: { value:""}
-      },
-      inputs: 1,
-      outputs: 1,
-      label: function () {
-        return this.name || 'receiver';
-      },
-      
+        category: 'telegram-account',
+        color: '#229ED9',
+        icon: 'tg.png',
+        defaults: {
+            name: { value: '' },
+            config: { type: 'config', required: false },
+            ignore: { value:""}
+        },
+        inputs: 1,
+        outputs: 1,
+        paletteLabel: 'receiver',
+        label: function() {
+            return this.name||'receiver';
+        }
     });
 </script>
 

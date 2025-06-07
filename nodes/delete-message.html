@@ -1,17 +1,19 @@
 <script type="text/javascript">
     RED.nodes.registerType('delete-message', {
-      category: 'telegram-account',
-      color: '#FF5733',
-      icon: 'tg.png',
-      defaults: {
-        name: { value: '' },
-        config: { type: 'config', required: false },
-      },
-      inputs: 1,
-      outputs: 1,
-      label: function () {
-        return this.name || 'delete message';
-      },
+        category: 'telegram-account',
+        color: '#FF5733',
+        icon: 'tg.png',
+        align: 'right',
+        defaults: {
+            name: { value: '' },
+            config: { type: 'config', required: false },
+        },
+        inputs: 1,
+        outputs: 1,
+        paletteLabel: 'delete message',
+        label: function() {
+            return this.name||'delete message';
+        }
     });
 </script>
 

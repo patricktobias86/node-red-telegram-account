@@ -3,6 +3,7 @@
         category: 'telegram-account',
         color: '#a6bbcf',
         defaults: {
+            name: { value: "" },
             api_id: { value: "" },
             api_hash: { value: "" },
             phoneNumber: { value: "" },
@@ -11,9 +12,14 @@
         inputs: 1,
         outputs: 1,
         icon: 'tg.png',
+        align: 'right',
         paletteLabel: 'user auth',
+        label: function() {
+            return this.name||'user auth';
+        },
         oneditprepare: function () {
             // Initialize values
+            $("#node-input-name").val(this.name || "");
             $("#node-input-api_id").val(this.api_id || "");
             $("#node-input-api_hash").val(this.api_hash || "");
             $("#node-input-phoneNumber").val(this.phoneNumber || "");
@@ -21,6 +27,7 @@
         },
         oneditsave: function () {
             // Save values
+            this.name = $("#node-input-name").val();
             this.api_id = $("#node-input-api_id").val();
             this.api_hash = $("#node-input-api_hash").val();
             this.phoneNumber = $("#node-input-phoneNumber").val();
@@ -30,6 +37,12 @@
 </script>
 
 <script type="text/html" data-template-name="auth">
+<div class="form-row">
+    <label for="node-input-name">
+        <i class="fa fa-tag"></i> Name
+    </label>
+    <input type="text" id="node-input-name" placeholder="Name">
+</div>    
 <div class="form-row">
     <label for="node-input-api_id">
         <i class="fa fa-key"></i> API ID
@@ -90,6 +103,7 @@ const wait = flow.get("waitForCode");
 if (typeof wait === "function") {
     wait(code);
     flow.set("waitForCode", null);
+    node.status({fill:"blue",shape:"ring",text:"Code sent!"});
 }
     </pre>
 

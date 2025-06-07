@@ -3,6 +3,7 @@
         category: 'telegram-account',
         color: '#229ED9',
         icon: 'tg.png',
+        align: 'right',
         defaults: {
             name: { value: '' },
             config: { type: 'config', required: false },
@@ -23,8 +24,9 @@
         },
         inputs: 1,
         outputs: 1,
-        label: function () {
-            return this.name || 'promote admin';
+        paletteLabel: 'promote admin',
+        label: function() {
+            return this.name||'promote admin';
         },
         oneditprepare: function () {
             // No extra logic needed
