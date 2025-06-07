@@ -3,14 +3,16 @@
         category: 'telegram-account',
         color: '#229ED9',
         icon: 'tg.png',
+        align: 'right',
         defaults: {
             name: { value: '' },
             config: { type: 'config', required: false },
         },
         inputs: 1,
         outputs: 1,
-        label: function () {
-            return this.name || 'get entity';
+        paletteLabel: 'get entity',
+        label: function() {
+            return this.name||'get entity';
         }
     });
 </script>

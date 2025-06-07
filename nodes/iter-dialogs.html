@@ -3,6 +3,7 @@
         category: 'telegram-account',
         color: '#32a3e0',
         icon: 'tg.png',
+        align: 'right',
         defaults: {
             name: { value: '' },
             config: { type: 'config', required: true },
@@ -17,9 +18,9 @@
         inputs: 1,
         outputs: 1,
         paletteLabel: 'iterate dialogs',
-        label: function () {
-            return this.name || 'iterate dialogs';
-        },
+        label: function() {
+            return this.name||'iterate dialogs';
+        }
     });
 </script>
 

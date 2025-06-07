@@ -1,0 +1,104 @@
+[
+    {
+        "id": "8a1d5a99e1018272",
+        "type": "tab",
+        "label": "Example User Auth",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "inject_credentials",
+        "type": "inject",
+        "z": "8a1d5a99e1018272",
+        "name": "Start Auth",
+        "props": [],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "x": 160,
+        "y": 100,
+        "wires": [
+            [
+                "ee6466b89cc7a43b"
+            ]
+        ]
+    },
+    {
+        "id": "debug_output",
+        "type": "debug",
+        "z": "8a1d5a99e1018272",
+        "name": "Session Output",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 560,
+        "y": 100,
+        "wires": []
+    },
+    {
+        "id": "inject_code",
+        "type": "inject",
+        "z": "8a1d5a99e1018272",
+        "name": "Send Code",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": "",
+        "topic": "",
+        "payload": "{\"code\":\"00000\"}",
+        "payloadType": "json",
+        "x": 170,
+        "y": 180,
+        "wires": [
+            [
+                "function_send_code"
+            ]
+        ]
+    },
+    {
+        "id": "function_send_code",
+        "type": "function",
+        "z": "8a1d5a99e1018272",
+        "name": "Submit Code",
+        "func": "const code = msg.payload.code;\nconst wait = flow.get(\"waitForCode\");\nif (typeof wait === \"function\") {\n    wait(code);\n    flow.set(\"waitForCode\", null);\n    node.status({fill:\"blue\",shape:\"ring\",text:\"Code sent!\"});\n} else {\n    node.warn(\"No code listener available. Did you trigger auth first?\");\n}\nreturn null;",
+        "outputs": 0,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 370,
+        "y": 180,
+        "wires": []
+    },
+    {
+        "id": "ee6466b89cc7a43b",
+        "type": "auth",
+        "z": "8a1d5a99e1018272",
+        "name": "",
+        "api_id": "",
+        "api_hash": "",
+        "phoneNumber": "",
+        "password": "",
+        "x": 350,
+        "y": 100,
+        "wires": [
+            [
+                "debug_output"
+            ]
+        ]
+    }
+]
