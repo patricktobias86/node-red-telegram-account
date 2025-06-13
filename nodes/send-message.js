@@ -48,7 +48,7 @@ module.exports = function (RED) {
                     supportStreaming: supportStreaming,
                     noforwards: noforwards,
                     commentTo: commentTo !== "" ? commentTo : undefined,
-                    topMsgId: topMsgId !== topMsgId ? commentTo : undefined,
+                    topMsgId: topMsgId !== "" ? topMsgId : undefined,
                 };
 
                 if (schedule) {
