@@ -1,0 +1,56 @@
+<script type="text/javascript">
+    RED.nodes.registerType('resolve-userid', {
+        category: 'telegram-account',
+        color: '#229ED9',
+        icon: 'tg.png',
+        align: 'right',
+        defaults: {
+            name: { value: '' },
+            config: { type: 'config', required: false },
+            username: { value: '' }
+        },
+        inputs: 1,
+        outputs: 1,
+        paletteLabel: 'resolve userid',
+        label: function() {
+            return this.name||'resolve userid';
+        }
+    });
+</script>
+
+<script type="text/html" data-template-name="resolve-userid">
+    <div class="form-row">
+        <label for="node-input-name">
+            <i class="fa fa-tag"></i> Name
+        </label>
+        <input type="text" id="node-input-name" placeholder="Name" style="width: 60%" />
+    </div>
+    <div class="form-row">
+        <label for="node-input-config">
+            <i class="fa fa-gear"></i> Config
+        </label>
+        <input type="text" id="node-input-config" placeholder="Config" style="width: 60%" />
+    </div>
+    <div class="form-row">
+        <label for="node-input-username">
+            <i class="fa fa-user"></i> Username
+        </label>
+        <input type="text" id="node-input-username" placeholder="@username" style="width: 60%" />
+    </div>
+</script>
+
+<script type="text/html" data-help-name="resolve-userid">
+    <p>The <b>resolve-userid</b> node converts a Telegram username into a numeric user ID.</p>
+    <h3>Inputs</h3>
+    <dl class="message-properties">
+        <dt>payload.username <span class="property-type">string</span></dt>
+        <dd>The Telegram username to resolve, e.g., <code>@someuser</code>.</dd>
+        <dt>payload.client <span class="property-type">object</span></dt>
+        <dd>Optional Telegram client instance. If omitted, the client from the configuration node is used.</dd>
+    </dl>
+    <h3>Outputs</h3>
+    <dl class="message-properties">
+        <dt>payload.userId <span class="property-type">number | bigint</span></dt>
+        <dd>The resolved Telegram user ID, or <code>null</code> if resolution fails.</dd>
+    </dl>
+</script>
