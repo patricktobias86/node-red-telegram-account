@@ -9,3 +9,8 @@
 ```bash
 npm i @patricktobias86/node-red-telegram-account
 ```
+
+## Nodes
+
+- resolve-userid – resolve a Telegram username to its numeric user ID
+
