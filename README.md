@@ -14,3 +14,9 @@ npm i @patricktobias86/node-red-telegram-account
 
 - resolve-userid – resolve a Telegram username to its numeric user ID
 
+## Session management
+
+Connections to Telegram are cached by the configuration node. When the flow is
+redeployed, the existing session is reused instead of creating a new one.
+The client is only disconnected once no nodes reference that session anymore.
+

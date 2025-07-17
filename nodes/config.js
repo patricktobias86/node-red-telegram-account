@@ -1,7 +1,7 @@
 const { TelegramClient } = require("telegram");
 const { StringSession } = require("telegram/sessions");
 
-const activeClients = {}; // Cache: session string → connected client
+const activeClients = {}; // Cache: session string → { client, refCount }
 
 module.exports = function (RED) {
     function TelegramClientConfig(config) {
@@ -18,7 +18,9 @@ module.exports = function (RED) {
 
         if (activeClients[sessionStr]) {
             // Reuse existing client
-            this.client = activeClients[sessionStr];
+            const record = activeClients[sessionStr];
+            this.client = record.client;
+            record.refCount += 1;
             node.status({ fill: "green", shape: "dot", text: "Reused existing client" });
         } else {
             // Create and connect new client
@@ -28,24 +30,35 @@ module.exports = function (RED) {
                 requestRetries: config.requestRetries || 5,
             });
 
+            // Pre-store with refCount to ensure reuse during connection setup
+            activeClients[sessionStr] = { client: this.client, refCount: 1 };
+
             this.client.connect().then(async () => {
                 const authorized = await this.client.isUserAuthorized();
                 if (!authorized) {
                     node.error("Session is invalid");
                 } else {
                     node.status({ fill: "green", shape: "dot", text: "Connected" });
-                    activeClients[sessionStr] = this.client;
                 }
             }).catch(err => {
                 node.error("Connection error: " + err.message);
+                delete activeClients[sessionStr];
             });
         }
 
         this.on("close", async () => {
-            if (this.client && activeClients[sessionStr] === this.client) {
-                await this.client.disconnect();
-                delete activeClients[sessionStr];
-                node.status({ fill: "red", shape: "ring", text: "Disconnected" });
+            const record = activeClients[sessionStr];
+            if (record && record.client === this.client) {
+                record.refCount -= 1;
+                if (record.refCount <= 0) {
+                    try {
+                        await this.client.disconnect();
+                    } catch (err) {
+                        node.error("Disconnect error: " + err.message);
+                    }
+                    delete activeClients[sessionStr];
+                    node.status({ fill: "red", shape: "ring", text: "Disconnected" });
+                }
             }
         });
     }
