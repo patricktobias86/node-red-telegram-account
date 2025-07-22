@@ -31,6 +31,6 @@ See [docs/NODES.md](docs/NODES.md) for a detailed description of every node. Bel
 
 ## Session management
 
-Connections to Telegram are cached by the configuration node. When the flow is redeployed, the existing session is reused instead of creating a new one. The client is only disconnected once no nodes reference that session anymore.
+Connections to Telegram are cached by the configuration node. A Map keyed by the `stringSession` tracks each client together with a reference count and the connection promise. If a node is created while another one is still connecting, it waits for that promise and then reuses the same client. The client is disconnected only once no nodes reference that session anymore.
 
 Example flows can be found in the [examples](examples) folder.
