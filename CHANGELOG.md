@@ -9,3 +9,7 @@ All notable changes to this project will be documented in this file.
 ### Changed
 - Session management now tracks active clients in a `Map` for safer reuse.
 
+## [1.1.8] - 2025-07-22
+### Fixed
+- Receiver and Command nodes now remove their event listeners when closed to prevent duplicate messages after redeploys.
+

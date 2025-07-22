@@ -8,23 +8,30 @@ module.exports = function (RED) {
     const client =  this.config.client;
     const ignore = config.ignore.split(/\n/);
 
-  
-    try {
-      client.addEventHandler((update) => {
-        if(update.message.fromId != null && !ignore.includes(update.message.fromId.userId.toString())){
-          
-          node.send({
-            payload:{
-              update
-            }
-          } )
+    const event = new NewMessage();
+    const handler = (update) => {
+        if (update.message.fromId != null && !ignore.includes(update.message.fromId.userId.toString())) {
+            node.send({
+                payload: {
+                    update
+                }
+            });
         }
-        
-      }, new NewMessage());
-      
+    };
+
+    try {
+      client.addEventHandler(handler, event);
     } catch (err) {
       node.error('Authorization error: ' + err.message);
     }
+
+    this.on('close', () => {
+      try {
+        client.removeEventHandler(handler, event);
+      } catch (err) {
+        node.error('Handler removal error: ' + err.message);
+      }
+    });
 
   }
 
