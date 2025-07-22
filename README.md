@@ -45,3 +45,7 @@ npm test
 ```
 
 The tests use Mocha and verify that sessions are properly cached across nodes.
+
+## Changelog
+
+See [CHANGELOG.md](CHANGELOG.md) for release notes.
