@@ -34,3 +34,14 @@ See [docs/NODES.md](docs/NODES.md) for a detailed description of every node. Bel
 Connections to Telegram are cached by the configuration node. A Map keyed by the `stringSession` tracks each client together with a reference count and the connection promise. If a node is created while another one is still connecting, it waits for that promise and then reuses the same client. The client is disconnected only once no nodes reference that session anymore.
 
 Example flows can be found in the [examples](examples) folder.
+
+## Running tests
+
+After cloning the repository, install dependencies and run the test suite with:
+
+```bash
+npm install
+npm test
+```
+
+The tests use Mocha and verify that sessions are properly cached across nodes.
