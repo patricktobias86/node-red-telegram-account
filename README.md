@@ -18,8 +18,8 @@ See [docs/NODES.md](docs/NODES.md) for a detailed description of every node. Bel
 
 - **config** – stores your API credentials and caches sessions for reuse.
 - **auth** – interactive login that outputs a `stringSession`.
-- **receiver** – emits messages for every incoming update (with optional ignore list).
-- **command** – triggers when an incoming message matches a command or regex.
+- **receiver** – emits messages for every incoming update (with optional ignore list). Event listeners are cleaned up on node close so redeploys won't duplicate messages.
+- **command** – triggers when an incoming message matches a command or regex. Event listeners are removed on redeploy to prevent duplicates.
 - **send-message** – sends text or media messages with rich options.
 - **send-files** – uploads one or more files with captions and buttons.
 - **get-entity** – resolves usernames, IDs or t.me links into Telegram entities.

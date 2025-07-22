@@ -9,43 +9,45 @@ module.exports = function (RED) {
     /** @type {TelegramClient} */
     const client =  this.config.client;
 
-    
-
-    try {
-      client.addEventHandler((update) => {
-        const message = update.message.message
+    const event = new NewMessage();
+    const handler = (update) => {
+        const message = update.message.message;
         if (message) {
             if (config.regex) {
                 const regex = new RegExp(config.command);
 
                 if (regex.test(message)) {
-                    
                     var msg = {
                         payload: {
                             update
                         }
                     };
-
-                    
                     node.send(msg);
                 }
             } else if (message === config.command) {
-                
                 var msg = {
                     payload: {
                         update
                     }
                 };
-
-                
                 node.send(msg);
             }
         }
-      }, new NewMessage());
-      
+    };
+
+    try {
+      client.addEventHandler(handler, event);
     } catch (err) {
       node.error('Authorization error: ' + err.message);
     }
+
+    this.on('close', () => {
+      try {
+        client.removeEventHandler(handler, event);
+      } catch (err) {
+        node.error('Handler removal error: ' + err.message);
+      }
+    });
 
   }
 
