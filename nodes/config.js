@@ -1,7 +1,7 @@
 const { TelegramClient } = require("telegram");
 const { StringSession } = require("telegram/sessions");
 
-const activeClients = {}; // Cache: session string → { client, refCount }
+const activeClients = new Map(); // Cache: session string → { client, refCount, connecting }
 
 module.exports = function (RED) {
     function TelegramClientConfig(config) {
@@ -16,12 +16,19 @@ module.exports = function (RED) {
 
         const node = this;
 
-        if (activeClients[sessionStr]) {
+        if (activeClients.has(sessionStr)) {
             // Reuse existing client
-            const record = activeClients[sessionStr];
+            const record = activeClients.get(sessionStr);
             this.client = record.client;
             record.refCount += 1;
-            node.status({ fill: "green", shape: "dot", text: "Reused existing client" });
+            if (record.connecting) {
+                node.status({ fill: "yellow", shape: "dot", text: "Waiting for connection" });
+                record.connecting.then(() => {
+                    node.status({ fill: "green", shape: "dot", text: "Reused existing client" });
+                }).catch(err => node.error("Connection error: " + err.message));
+            } else {
+                node.status({ fill: "green", shape: "dot", text: "Reused existing client" });
+            }
         } else {
             // Create and connect new client
             this.client = new TelegramClient(this.session, apiId, apiHash, {
@@ -30,24 +37,31 @@ module.exports = function (RED) {
                 requestRetries: config.requestRetries || 5,
             });
 
-            // Pre-store with refCount to ensure reuse during connection setup
-            activeClients[sessionStr] = { client: this.client, refCount: 1 };
+            node.status({ fill: "yellow", shape: "ring", text: "Connecting" });
 
-            this.client.connect().then(async () => {
-                const authorized = await this.client.isUserAuthorized();
-                if (!authorized) {
-                    node.error("Session is invalid");
-                } else {
+            const record = { client: this.client, refCount: 1, connecting: null };
+            record.connecting = this.client.connect()
+                .then(async () => {
+                    const authorized = await this.client.isUserAuthorized();
+                    if (!authorized) {
+                        throw new Error("Session is invalid");
+                    }
+                })
+                .then(() => {
                     node.status({ fill: "green", shape: "dot", text: "Connected" });
-                }
-            }).catch(err => {
-                node.error("Connection error: " + err.message);
-                delete activeClients[sessionStr];
-            });
+                    record.connecting = null;
+                })
+                .catch(err => {
+                    node.error("Connection error: " + err.message);
+                    activeClients.delete(sessionStr);
+                    record.connecting = null;
+                });
+
+            activeClients.set(sessionStr, record);
         }
 
         this.on("close", async () => {
-            const record = activeClients[sessionStr];
+            const record = activeClients.get(sessionStr);
             if (record && record.client === this.client) {
                 record.refCount -= 1;
                 if (record.refCount <= 0) {
@@ -56,7 +70,7 @@ module.exports = function (RED) {
                     } catch (err) {
                         node.error("Disconnect error: " + err.message);
                     }
-                    delete activeClients[sessionStr];
+                    activeClients.delete(sessionStr);
                     node.status({ fill: "red", shape: "ring", text: "Disconnected" });
                 }
             }
