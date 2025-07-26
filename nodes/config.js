@@ -6,6 +6,7 @@ const activeClients = new Map(); // Cache: session string → { client, refCount
 module.exports = function (RED) {
     function TelegramClientConfig(config) {
         RED.nodes.createNode(this, config);
+        this.debugEnabled = config.debug;
 
         const sessionStr = config.session;
         const apiId = parseInt(config.api_id);
@@ -21,6 +22,9 @@ module.exports = function (RED) {
             const record = activeClients.get(sessionStr);
             this.client = record.client;
             record.refCount += 1;
+            if (this.debugEnabled) {
+                node.log('config: reusing existing client');
+            }
             if (record.connecting) {
                 node.status({ fill: "yellow", shape: "dot", text: "Waiting for connection" });
                 record.connecting.then(() => {
@@ -31,6 +35,9 @@ module.exports = function (RED) {
             }
         } else {
             // Create and connect new client
+            if (this.debugEnabled) {
+                node.log('config: creating new client');
+            }
             this.client = new TelegramClient(this.session, apiId, apiHash, {
                 connectionRetries: config.connectionRetries || 5,
                 autoReconnect: config.autoReconnect !== false,
@@ -49,6 +56,9 @@ module.exports = function (RED) {
                 })
                 .then(() => {
                     node.status({ fill: "green", shape: "dot", text: "Connected" });
+                    if (this.debugEnabled) {
+                        node.log('config: connected');
+                    }
                     record.connecting = null;
                 })
                 .catch(err => {
@@ -65,6 +75,9 @@ module.exports = function (RED) {
             if (record && record.client === this.client) {
                 record.refCount -= 1;
                 if (record.refCount <= 0) {
+                    if (this.debugEnabled) {
+                        node.log('config: disconnecting client');
+                    }
                     try {
                         await this.client.disconnect();
                     } catch (err) {

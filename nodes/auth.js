@@ -5,8 +5,13 @@ module.exports = function (RED) {
     function TelegramClientConfig(config) {
         RED.nodes.createNode(this, config);
         const node = this;
+        this.debugEnabled = config.debug;
 
         this.on("input", async (msg) => {
+            const debug = node.debugEnabled || msg.debug;
+            if (debug) {
+                node.log('auth input: ' + JSON.stringify(msg));
+            }
 
             const payload = (msg && typeof msg.payload === "object") ? msg.payload : {};
 
@@ -53,22 +58,27 @@ module.exports = function (RED) {
                     ]
                 });
 
-                node.send({
+                const out = {
                     topic: "auth_success",
                     payload: {
                         stringSession,
                         message: "Authorization successful!"
                     }
-                });
+                };
+                node.send(out);
+                if (debug) {
+                    node.log('auth output: ' + JSON.stringify(out));
+                }
 
                 node.status({ fill: "green", shape: "dot", text: "Authenticated" });
 
             } catch (err) {
                 node.error("Authentication failed: " + err.message);
-                node.send({
-                    topic: "auth_error",
-                    payload: { error: err.message },
-                });
+                const out = { topic: "auth_error", payload: { error: err.message } };
+                node.send(out);
+                if (debug) {
+                    node.log('auth output: ' + JSON.stringify(out));
+                }
                 node.status({ fill: "red", shape: "ring", text: "Failed" });
             }
         });

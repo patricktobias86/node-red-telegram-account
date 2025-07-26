@@ -9,6 +9,7 @@
             chatId: { value: '' },
             message: { value: '' },
             config: { type: 'config', required: false },
+            debug: { value: false },
             parseMode: { value: 'md' }, // Default parse mode is Markdown
             schedule: { value: '' }, // Default schedule is empty
             replyTo: { value: '' }, // Reply to a message
@@ -99,6 +100,12 @@
         <i class="fa fa-gear"></i> Config
       </label>
       <input type="hidden" id="node-input-config">
+    </div>
+    <div class="form-row">
+      <label for="node-input-debug">
+        <i class="fa fa-bug"></i> Debug
+      </label>
+      <input type="checkbox" id="node-input-debug">
     </div>
   
     <div class="form-row">
@@ -214,6 +221,7 @@
 
   <script type="text/html" data-help-name="send-message">
     <p>The <b>send-message</b> node allows sending messages via Telegram using the <code>telegram</code> library. It supports various message types, formatting options, and additional features like scheduling and silent messages.</p>
+    <p>Enable the <b>Debug</b> option to log incoming and outgoing messages to the Node-RED log.</p>
 
     <h3>Inputs</h3>
     <dl class="message-properties">

@@ -29,6 +29,8 @@ See [docs/NODES.md](docs/NODES.md) for a detailed description of every node. Bel
 - **promote-admin** – promotes a user to admin with configurable rights.
 - **resolve-userid** – converts a username to a numeric user ID.
 
+All nodes include a <code>Debug</code> option that logs incoming and outgoing messages to the Node-RED log when enabled.
+
 ## Session management
 
 Connections to Telegram are cached by the configuration node. A Map keyed by the `stringSession` tracks each client together with a reference count and the connection promise. If a node is created while another one is still connecting, it waits for that promise and then reuses the same client.

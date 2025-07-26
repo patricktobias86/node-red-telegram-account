@@ -2,9 +2,14 @@ module.exports = function (RED) {
     function SendFile(config) {
         RED.nodes.createNode(this, config);
         this.config = RED.nodes.getNode(config.config);
+        this.debugEnabled = config.debug;
         var node = this;
 
         this.on('input', async function (msg) {
+            const debug = node.debugEnabled || msg.debug;
+            if (debug) {
+                node.log('send-files input: ' + JSON.stringify(msg));
+            }
             const chatId = msg.payload.chatId || config.chatId;
             const files = msg.payload.files || config.files.split(',').map(file => file.trim());
             const caption = msg.payload.caption || config.caption;
@@ -59,9 +64,11 @@ module.exports = function (RED) {
                 
                 // Send files
                 const response = await client.sendFile(chatId, params);
-                node.send({
-                    payload: response,
-                });
+                const out = { payload: response };
+                node.send(out);
+                if (debug) {
+                    node.log('send-files output: ' + JSON.stringify(out));
+                }
             } catch (err) {
                 node.error('Error sending files: ' + err.message);
             }

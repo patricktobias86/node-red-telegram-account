@@ -7,6 +7,7 @@
         defaults: {
             name: { value: '' },
             config: { type: 'config', required: true },
+            debug: { value: false },
             limit: { value: "" },
             offsetDate: { value: ""},
             offsetId: { value: "" },
@@ -48,6 +49,12 @@
             style="width: 60%"
             ng-model="config"
         />
+    </div>
+    <div class="form-row">
+        <label for="node-input-debug">
+            <i class="fa fa-bug"></i> Debug
+        </label>
+        <input type="checkbox" id="node-input-debug" ng-model="debug" />
     </div>
     <div class="form-row">
         <label for="node-input-limit">
@@ -131,6 +138,7 @@
 
 <script type="text/html" data-help-name="iter-dialogs">
     <p>The <b>iter-dialogs</b> node retrieves a list of Telegram dialogs (chats, channels, or groups) by iterating through them using the Telegram API.</p>
+    <p>Enable <b>Debug</b> to log the request and resulting dialogs.</p>
 
     <h3>Inputs</h3>
     <dl class="message-properties">

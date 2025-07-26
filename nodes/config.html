@@ -6,6 +6,7 @@
           api_id: {value:"", required:true},
           api_hash: {value:"", required:true},
           session: {value:"", required:true},
+          debug: {value:false},
           useIPV6: {value: undefined},
           timeout: {value: undefined},
           requestRetries: {value: undefined},
@@ -51,6 +52,10 @@
   <div class="form-row">
       <label for="node-config-input-session"><i class="icon-tasks"></i> Session</label>
       <input type="text" id="node-config-input-session" placeholder="Enter Session" style="width:70%" ng-model="node.session">
+  </div>
+  <div class="form-row">
+      <label for="node-config-input-debug"><i class="icon-bug"></i> Debug</label>
+      <input type="checkbox" id="node-config-input-debug" ng-model="node.debug">
   </div>
   <div class="form-row">
       <label for="node-config-input-useIPV6"><i class="icon-tasks"></i> Use IPV6</label>

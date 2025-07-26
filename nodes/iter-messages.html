@@ -7,6 +7,7 @@
         defaults: {
             name: { value: '' },
             config: { type: 'config', required: true },
+            debug: { value: false },
             chatId: { value: '', required: false },
             limit: { value: '', required: false },
             offsetDate: { value: '', required: false },
@@ -67,6 +68,12 @@
             style="width: 60%"
             ng-model="config"
         />
+    </div>
+    <div class="form-row">
+        <label for="node-input-debug">
+            <i class="fa fa-bug"></i> Debug
+        </label>
+        <input type="checkbox" id="node-input-debug" ng-model="debug" />
     </div>
     <div class="form-row">
         <label for="node-input-chatId">
@@ -259,6 +266,7 @@
 
 <script type="text/html" data-help-name="iter-messages">
     <p>The <b>iter-messages</b> node retrieves messages from a specified chat or user using the Telegram API. It supports a wide range of filtering and pagination options, allowing for efficient message iteration.</p>
+    <p>When <b>Debug</b> is enabled, incoming parameters and results are logged.</p>
 
     <h3>Inputs</h3>
     <dl class="message-properties">

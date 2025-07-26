@@ -7,6 +7,7 @@
         defaults: {
             name: { value: '' },
             config: { type: 'config', required: false },
+            debug: { value: false },
         },
         inputs: 1,
         outputs: 1,
@@ -40,11 +41,18 @@
         style="width: 60%"
       />
     </div>
+    <div class="form-row">
+      <label for="node-input-debug">
+        <i class="fa fa-bug"></i> Debug
+      </label>
+      <input type="checkbox" id="node-input-debug">
+    </div>
   </script>
 
 
-  <script type="text/html" data-help-name="delete-message">
+<script type="text/html" data-help-name="delete-message">
     <p>The <b>delete-message</b> node allows you to delete messages from a Telegram chat. It supports deleting multiple messages at once and provides an option to revoke messages for all chat participants.</p>
+    <p>Enable <b>Debug</b> to log the input and output.</p>
 
     <h3>Inputs</h3>
     <dl class="message-properties">
