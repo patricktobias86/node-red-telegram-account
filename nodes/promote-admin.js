@@ -6,9 +6,14 @@ module.exports = function (RED) {
     function PromoteAdmin(config) {
         RED.nodes.createNode(this, config);
         this.config = RED.nodes.getNode(config.config);
+        this.debugEnabled = config.debug;
         var node = this;
 
         this.on('input', async function (msg) {
+            const debug = node.debugEnabled || msg.debug;
+            if (debug) {
+                node.log('promote-admin input: ' + JSON.stringify(msg));
+            }
             const client = msg.payload?.client || this.config.client;
             const chatId = msg.payload.chatId || config.chatId;
             const userId = msg.payload.userId || config.userId;
@@ -39,7 +44,11 @@ module.exports = function (RED) {
                     rank: rank,
                 }));
 
-                node.send({ payload: { response: result } });
+                const out = { payload: { response: result } };
+                node.send(out);
+                if (debug) {
+                    node.log('promote-admin output: ' + JSON.stringify(out));
+                }
             } catch (err) {
                 node.error("Error promoting admin: " + err.message);
             }

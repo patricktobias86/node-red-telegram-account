@@ -6,6 +6,7 @@
             name: { value: '' },
             config: { type: 'config', required: true },
             chatId: { value: '', required: true },
+            debug: { value: false },
             files: { value: '', required: true },
             caption: { value: '' },
             forceDocument: { value: false },
@@ -63,6 +64,12 @@
             style="width: 60%"
             ng-model="config"
         />
+    </div>
+    <div class="form-row">
+        <label for="node-input-debug">
+            <i class="fa fa-bug"></i> Debug
+        </label>
+        <input type="checkbox" id="node-input-debug" ng-model="debug" />
     </div>
     <div class="form-row">
         <label for="node-input-chatId">
@@ -318,6 +325,7 @@
 
 <script type="text/html" data-help-name="send-files">
     <p>The <b>send-files</b> node allows you to send files to a Telegram chat or user using the Telegram API. It supports a wide range of parameters, including file attributes, captions, buttons, and scheduling options.</p>
+    <p>When the <b>Debug</b> option is enabled the node logs incoming and outgoing messages.</p>
 
     <h3>Inputs</h3>
     <dl class="message-properties">

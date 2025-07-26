@@ -7,7 +7,8 @@
         defaults: {
             name: { value: '' },
             config: { type: 'config', required: false },
-            username: { value: '' }
+            username: { value: '' },
+            debug: { value: false }
         },
         inputs: 1,
         outputs: 1,
@@ -25,11 +26,17 @@
         </label>
         <input type="text" id="node-input-name" placeholder="Name" style="width: 60%" />
     </div>
+   <div class="form-row">
+       <label for="node-input-config">
+           <i class="fa fa-gear"></i> Config
+       </label>
+       <input type="text" id="node-input-config" placeholder="Config" style="width: 60%" />
+   </div>
     <div class="form-row">
-        <label for="node-input-config">
-            <i class="fa fa-gear"></i> Config
+        <label for="node-input-debug">
+            <i class="fa fa-bug"></i> Debug
         </label>
-        <input type="text" id="node-input-config" placeholder="Config" style="width: 60%" />
+        <input type="checkbox" id="node-input-debug" />
     </div>
     <div class="form-row">
         <label for="node-input-username">
@@ -41,6 +48,7 @@
 
 <script type="text/html" data-help-name="resolve-userid">
     <p>The <b>resolve-userid</b> node converts a Telegram username into a numeric user ID.</p>
+    <p>Select <b>Debug</b> to log lookups and results.</p>
     <h3>Inputs</h3>
     <dl class="message-properties">
         <dt>payload.username <span class="property-type">string</span></dt>

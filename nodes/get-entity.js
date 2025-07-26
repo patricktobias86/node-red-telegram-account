@@ -2,9 +2,14 @@ module.exports = function (RED) {
     function GetEntity(config) {
         RED.nodes.createNode(this, config);
         this.config = RED.nodes.getNode(config.config);
+        this.debugEnabled = config.debug;
         var node = this;
 
         this.on('input', async function (msg) {
+            const debug = node.debugEnabled || msg.debug;
+            if (debug) {
+                node.log('get-entity input: ' + JSON.stringify(msg));
+            }
             const input = msg.payload.input || config.input;
               /** @type {TelegramClient} */
             const client = msg.payload?.client ? msg.payload.client : this.config.client;
@@ -20,14 +25,18 @@ module.exports = function (RED) {
                     entity = await client.getEntity(input);
                 }
 
-                node.send({
-                    payload: {input:entity},
-                });
+                const out = { payload: { input: entity } };
+                node.send(out);
+                if (debug) {
+                    node.log('get-entity output: ' + JSON.stringify(out));
+                }
             } catch (err) {
                 node.error('Error getting entity: ' + err.message);
-                node.send({
-                    payload:{ input: null}
-                })
+                const out = { payload: { input: null } };
+                node.send(out);
+                if (debug) {
+                    node.log('get-entity output: ' + JSON.stringify(out));
+                }
             }
         });
     }

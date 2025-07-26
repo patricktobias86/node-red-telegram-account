@@ -4,9 +4,14 @@ module.exports = function (RED) {
     function IterMessages(config) {
         RED.nodes.createNode(this, config);
         this.config = RED.nodes.getNode(config.config);
+        this.debugEnabled = config.debug;
         var node = this;
 
         this.on('input', async function (msg) {
+            const debug = node.debugEnabled || msg.debug;
+            if (debug) {
+                node.log('iter-messages input: ' + JSON.stringify(msg));
+            }
     
             /** @type {TelegramClient} */
             const client = msg.payload?.client ? msg.payload.client : this.config.client;
@@ -80,9 +85,11 @@ module.exports = function (RED) {
                     }
                 }
                 
-                node.send({
-                    payload: { messages },
-                });
+                const out = { payload: { messages } };
+                node.send(out);
+                if (debug) {
+                    node.log('iter-messages output: ' + JSON.stringify(out));
+                }
             } catch (err) {
                 node.error('Error iter messages: ' + err.message);
             }

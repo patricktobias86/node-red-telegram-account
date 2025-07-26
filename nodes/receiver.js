@@ -4,18 +4,23 @@ module.exports = function (RED) {
   function Receiver(config) {
     RED.nodes.createNode(this, config);
     this.config = RED.nodes.getNode(config.config);
+    this.debugEnabled = config.debug;
     var node = this;
     const client =  this.config.client;
     const ignore = config.ignore.split(/\n/);
 
     const event = new NewMessage();
     const handler = (update) => {
+        const debug = node.debugEnabled;
+        if (debug) {
+            node.log('receiver update: ' + JSON.stringify(update));
+        }
         if (update.message.fromId != null && !ignore.includes(update.message.fromId.userId.toString())) {
-            node.send({
-                payload: {
-                    update
-                }
-            });
+            const out = { payload: { update } };
+            node.send(out);
+            if (debug) {
+                node.log('receiver output: ' + JSON.stringify(out));
+            }
         }
     };
 

@@ -5,9 +5,14 @@ module.exports = function (RED) {
     function SendMessage(config) {
         RED.nodes.createNode(this, config);
         this.config = RED.nodes.getNode(config.config);
+        this.debugEnabled = config.debug;
         var node = this;
 
         this.on('input', async function (msg) {
+            const debug = node.debugEnabled || msg.debug;
+            if (debug) {
+                node.log('send-message input: ' + JSON.stringify(msg));
+            }
             let chatId = msg.payload.chatId || config.chatId;
             const message = msg.payload.message || config.message;
             const parseMode = msg.payload.parseMode || config.parseMode;
@@ -68,9 +73,11 @@ module.exports = function (RED) {
                     await client.sendMessage(entity, params);
                 }
 
-                node.send({
-                    payload: { response },
-                });
+                const out = { payload: { response } };
+                node.send(out);
+                if (debug) {
+                    node.log('send-message output: ' + JSON.stringify(out));
+                }
             } catch (err) {
                 node.error('Error send message: ' + err.message);
             }

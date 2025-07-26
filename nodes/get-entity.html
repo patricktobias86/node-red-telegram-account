@@ -7,6 +7,7 @@
         defaults: {
             name: { value: '' },
             config: { type: 'config', required: false },
+            debug: { value: false },
         },
         inputs: 1,
         outputs: 1,
@@ -40,10 +41,17 @@
             style="width: 60%"
         />
     </div>
+    <div class="form-row">
+        <label for="node-input-debug">
+            <i class="fa fa-bug"></i> Debug
+        </label>
+        <input type="checkbox" id="node-input-debug" />
+    </div>
 </script>
 
 <script type="text/html" data-help-name="get-entity">
     <p>The <b>get-entity</b> node retrieves information about a Telegram entity (e.g., user, chat, or channel) using its identifier or URL.</p>
+    <p>Enable <b>Debug</b> to print incoming and outgoing messages to the log.</p>
 
     <h3>Inputs</h3>
     <dl class="message-properties">

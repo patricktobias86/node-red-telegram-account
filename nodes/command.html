@@ -7,7 +7,8 @@
         name: { value: '' },
         config: { type: 'config', required: false },
         command: { value: "", required: true },
-        regex: { value: false }
+        regex: { value: false },
+        debug: { value: false }
       },
       inputs: 1,
       outputs: 1,
@@ -41,6 +42,12 @@
         style="width: 60%"
       />
     </div>
+    <div class="form-row">
+      <label for="node-input-debug">
+        <i class="fa fa-bug"></i> Debug
+      </label>
+      <input type="checkbox" id="node-input-debug">
+    </div>
 
     <div class="form-row">
         <label for="node-input-command">
@@ -57,8 +64,9 @@
     </div>
   </script>
 
-  <script type="text/html" data-help-name="command">
+<script type="text/html" data-help-name="command">
     <p>The <b>command</b> node listens for specific commands or patterns in Telegram messages and triggers further processing when a match is found. It supports both exact matches and regex-based pattern matching.</p>
+    <p>Enable <b>Debug</b> to log matching updates and outputs.</p>
 
     <h3>Inputs</h3>
     <p>This node does not take any direct inputs. Instead, it listens for incoming messages from the Telegram bot or user.</p>

@@ -20,3 +20,5 @@ Below is a short description of each node. For a full list of configuration opti
 | **resolve-userid** | Converts a Telegram username to its numeric user ID. |
 
 
+All nodes provide a **Debug** checkbox. When enabled the node will log its input and output messages to aid troubleshooting.
+

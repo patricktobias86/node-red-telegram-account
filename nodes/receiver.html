@@ -6,7 +6,8 @@
         defaults: {
             name: { value: '' },
             config: { type: 'config', required: false },
-            ignore: { value:""}
+            ignore: { value:""},
+            debug: { value: false }
         },
         inputs: 1,
         outputs: 1,
@@ -41,6 +42,12 @@
       />
     </div>
     <div class="form-row">
+      <label for="node-input-debug">
+        <i class="fa fa-bug"></i> Debug
+      </label>
+      <input type="checkbox" id="node-input-debug">
+    </div>
+    <div class="form-row">
       <label for="node-input-ignore">
         <i class="fa fa-tag"></i> Config
       </label>
@@ -53,8 +60,9 @@
     </div>
   </script>
 
-  <script type="text/html" data-help-name="receiver">
+<script type="text/html" data-help-name="receiver">
     <p>The <b>receiver</b> node listens for incoming Telegram messages and forwards them as output messages in Node-RED. It supports filtering messages based on sender IDs to ignore specific users.</p>
+    <p>Turn on <b>Debug</b> to log received updates and the emitted messages.</p>
 
     <h3>Inputs</h3>
     <p>This node does not take any direct inputs. It listens to all incoming messages from the configured Telegram client.</p>

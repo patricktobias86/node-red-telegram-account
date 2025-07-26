@@ -7,6 +7,7 @@
         defaults: {
             name: { value: '' },
             config: { type: 'config', required: false },
+            debug: { value: false },
             chatId: { value: '' },
             userId: { value: '' },
             rank: { value: 'admin' },
@@ -42,6 +43,10 @@
     <div class="form-row">
         <label for="node-input-config"><i class="fa fa-gear"></i> Config</label>
         <input type="hidden" id="node-input-config">
+    </div>
+    <div class="form-row">
+        <label for="node-input-debug"><i class="fa fa-bug"></i> Debug</label>
+        <input type="checkbox" id="node-input-debug">
     </div>
 
     <div class="form-row">
@@ -193,6 +198,7 @@
 </script>
 <script type="text/html" data-help-name="promote-admin">
     <p><b>Promote Admin</b> lets you promote a user to admin in a Telegram group or channel using the Telegram MTProto API (via GramJS).</p>
+    <p>With <b>Debug</b> enabled the node logs its request and the response from Telegram.</p>
 
     <h3>Inputs</h3>
     <dl class="message-properties">

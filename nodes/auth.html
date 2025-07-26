@@ -7,7 +7,8 @@
             api_id: { value: "" },
             api_hash: { value: "" },
             phoneNumber: { value: "" },
-            password: { value: "" }
+            password: { value: "" },
+            debug: { value: false }
         },
         inputs: 1,
         outputs: 1,
@@ -70,6 +71,12 @@
     </label>
     <input type="password" id="node-input-password" placeholder="Enter your password (if any)">
 </div>
+<div class="form-row">
+    <label for="node-input-debug">
+        <i class="fa fa-bug"></i> Debug
+    </label>
+    <input type="checkbox" id="node-input-debug">
+</div>
 
 <p>
     <strong>Note:</strong> These values are used to create a Telegram session string.
@@ -78,6 +85,7 @@
 
 <script type="text/html" data-help-name="auth">
     <p>The <b>auth</b> node facilitates Telegram API authentication using the <code>telegram</code> (GramJS) library. It allows users to authenticate a session and retrieve a <code>stringSession</code> for reuse with other Telegram clients.</p>
+    <p>Enable <b>Debug</b> to log the incoming credentials and returned session.</p>
 
     <h3>Inputs</h3>
     <dl class="message-properties">
