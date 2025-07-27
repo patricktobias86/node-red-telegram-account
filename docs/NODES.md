@@ -13,7 +13,7 @@ Below is a short description of each node. For a full list of configuration opti
 | **send-message** | Sends text messages or media files to a chat. Supports parse mode, buttons, scheduling, and more. |
 | **send-files** | Uploads one or more files to a chat with optional caption, thumbnails and other parameters. |
 | **get-entity** | Resolves a username, user ID or t.me URL into a Telegram entity object. |
-| **delete-message** | Deletes one or multiple messages from a chat. Can revoke messages for all participants. |
+| **delete-message** | Deletes one or multiple messages from a chat while passing the original input message along with the API response. Can revoke messages for all participants. |
 | **iter-dialogs** | Iterates through the user’s dialogs (chats, groups, channels) and outputs the collected list. |
 | **iter-messages** | Iterates over messages in a chat with various filtering and pagination options. |
 | **promote-admin** | Grants admin rights to a user in a group or channel with configurable permissions. |

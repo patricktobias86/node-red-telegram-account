@@ -1,4 +1,5 @@
 const { NewMessage } = require("telegram/events");
+const util = require("util");
 
 module.exports = function (RED) {
   function Receiver(config) {
@@ -13,13 +14,13 @@ module.exports = function (RED) {
     const handler = (update) => {
         const debug = node.debugEnabled;
         if (debug) {
-            node.log('receiver update: ' + JSON.stringify(update));
+            node.log('receiver update: ' + util.inspect(update, { depth: null }));
         }
         if (update.message.fromId != null && !ignore.includes(update.message.fromId.userId.toString())) {
             const out = { payload: { update } };
             node.send(out);
             if (debug) {
-                node.log('receiver output: ' + JSON.stringify(out));
+                node.log('receiver output: ' + util.inspect(out, { depth: null }));
             }
         }
     };
