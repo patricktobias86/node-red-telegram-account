@@ -23,7 +23,7 @@ See [docs/NODES.md](docs/NODES.md) for a detailed description of every node. Bel
 - **send-message** – sends text or media messages with rich options.
 - **send-files** – uploads one or more files with captions and buttons.
 - **get-entity** – resolves usernames, IDs or t.me links into Telegram entities.
-- **delete-message** – deletes one or more messages, optionally revoking them.
+ - **delete-message** – deletes one or more messages, optionally revoking them, and forwards the original input message with the API response.
 - **iter-dialogs** – iterates over your dialogs (chats, groups, channels).
 - **iter-messages** – iterates over messages in a chat with filtering options.
 - **promote-admin** – promotes a user to admin with configurable rights.

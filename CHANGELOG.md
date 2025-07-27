@@ -13,3 +13,9 @@ All notable changes to this project will be documented in this file.
 ### Fixed
 - Receiver and Command nodes now remove their event listeners when closed to prevent duplicate messages after redeploys.
 
+## [1.1.10] - 2025-07-27
+### Fixed
+- Receiver node no longer fails when Debug is enabled and handles updates containing `BigInt` values.
+### Changed
+- `delete-message` now forwards the original message along with the Telegram API response.
+
