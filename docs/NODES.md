@@ -7,7 +7,7 @@ Below is a short description of each node. For a full list of configuration opti
 | Node | Description |
 |------|-------------|
 | **config** | Configuration node storing API credentials and connection options. Other nodes reference this to share a Telegram client and reuse the session. Connections are tracked in a Map with a reference count so multiple nodes can wait for the same connection. |
-| **auth** | Starts an interactive login flow. Produces a `stringSession` that can be reused with the `config` node. |
+| **auth** | Starts an interactive login flow. Produces a `stringSession` (available in both <code>msg.payload.stringSession</code> and <code>msg.stringSession</code>) that can be reused with the `config` node. |
 | **receiver** | Emits an output message for every incoming Telegram message. Can ignore specific user IDs. Event handlers are automatically removed when the node is closed. |
 | **command** | Listens for new messages and triggers when a message matches a configured command or regular expression. The event listener is cleaned up on node close to avoid duplicates. |
 | **send-message** | Sends text messages or media files to a chat. Supports parse mode, buttons, scheduling, and more. |
