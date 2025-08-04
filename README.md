@@ -29,6 +29,8 @@ See [docs/NODES.md](docs/NODES.md) for a detailed description of every node. Bel
 - **promote-admin** – promotes a user to admin with configurable rights.
 - **resolve-userid** – converts a username to a numeric user ID.
 
+All nodes preserve any properties on the incoming message outside of <code>msg.payload</code>.
+
 All nodes include a <code>Debug</code> option that logs incoming and outgoing messages to the Node-RED log when enabled.
 
 ## Session management

@@ -44,7 +44,7 @@ module.exports = function (RED) {
                     rank: rank,
                 }));
 
-                const out = { payload: { response: result } };
+                const out = { ...msg, payload: { response: result } };
                 node.send(out);
                 if (debug) {
                     node.log('promote-admin output: ' + JSON.stringify(out));

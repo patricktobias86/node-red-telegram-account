@@ -19,3 +19,7 @@ All notable changes to this project will be documented in this file.
 ### Changed
 - `delete-message` now forwards the original message along with the Telegram API response.
 
+## [1.1.11] - 2025-08-04
+### Fixed
+- All nodes now preserve properties on the incoming message outside of the payload.
+

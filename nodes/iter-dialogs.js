@@ -45,7 +45,7 @@ module.exports = function (RED) {
                     dialogs[dialog.id] = dialog;
                     console.log(`${dialog.id}: ${dialog.title}`);
                 }
-                const out = { payload: { dialogs } };
+                const out = { ...msg, payload: { dialogs } };
                 node.send(out);
                 if (debug) {
                     node.log('iter-dialogs output: ' + JSON.stringify(out));

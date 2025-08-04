@@ -58,27 +58,28 @@ module.exports = function (RED) {
                     ]
                 });
 
-                const out = {
-                    topic: "auth_success",
-                    payload: {
-                        stringSession,
-                        message: "Authorization successful!"
-                    }
-                };
-                node.send(out);
-                if (debug) {
-                    node.log('auth output: ' + JSON.stringify(out));
-                }
+                 const out = {
+                     ...msg,
+                     topic: "auth_success",
+                     payload: {
+                         stringSession,
+                         message: "Authorization successful!"
+                     }
+                 };
+                 node.send(out);
+                 if (debug) {
+                     node.log('auth output: ' + JSON.stringify(out));
+                 }
 
                 node.status({ fill: "green", shape: "dot", text: "Authenticated" });
 
             } catch (err) {
-                node.error("Authentication failed: " + err.message);
-                const out = { topic: "auth_error", payload: { error: err.message } };
-                node.send(out);
-                if (debug) {
-                    node.log('auth output: ' + JSON.stringify(out));
-                }
+                 node.error("Authentication failed: " + err.message);
+                 const out = { ...msg, topic: "auth_error", payload: { error: err.message } };
+                 node.send(out);
+                 if (debug) {
+                     node.log('auth output: ' + JSON.stringify(out));
+                 }
                 node.status({ fill: "red", shape: "ring", text: "Failed" });
             }
         });

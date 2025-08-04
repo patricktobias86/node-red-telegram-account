@@ -64,7 +64,7 @@ module.exports = function (RED) {
                 
                 // Send files
                 const response = await client.sendFile(chatId, params);
-                const out = { payload: response };
+                const out = { ...msg, payload: response };
                 node.send(out);
                 if (debug) {
                     node.log('send-files output: ' + JSON.stringify(out));

@@ -25,14 +25,14 @@ module.exports = function (RED) {
                     entity = await client.getEntity(input);
                 }
 
-                const out = { payload: { input: entity } };
+                const out = { ...msg, payload: { input: entity } };
                 node.send(out);
                 if (debug) {
                     node.log('get-entity output: ' + JSON.stringify(out));
                 }
             } catch (err) {
                 node.error('Error getting entity: ' + err.message);
-                const out = { payload: { input: null } };
+                const out = { ...msg, payload: { input: null } };
                 node.send(out);
                 if (debug) {
                     node.log('get-entity output: ' + JSON.stringify(out));
