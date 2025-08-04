@@ -73,7 +73,7 @@ module.exports = function (RED) {
                     await client.sendMessage(entity, params);
                 }
 
-                const out = { payload: { response } };
+                const out = { ...msg, payload: { response } };
                 node.send(out);
                 if (debug) {
                     node.log('send-message output: ' + JSON.stringify(out));

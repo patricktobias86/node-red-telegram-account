@@ -30,14 +30,14 @@ module.exports = function(RED) {
                 } else if (entity?.userId) {
                     userId = entity.userId;
                 }
-                const out = { payload: { userId } };
+                const out = { ...msg, payload: { userId } };
                 node.send(out);
                 if (debug) {
                     node.log('resolve-userid output: ' + JSON.stringify(out));
                 }
             } catch (err) {
                 node.error('Error resolving username: ' + err.message);
-                const out = { payload: { userId: null } };
+                const out = { ...msg, payload: { userId: null } };
                 node.send(out);
                 if (debug) {
                     node.log('resolve-userid output: ' + JSON.stringify(out));

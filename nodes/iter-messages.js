@@ -84,8 +84,8 @@ module.exports = function (RED) {
                         console.log(message.id, message.text);
                     }
                 }
-                
-                const out = { payload: { messages } };
+
+                const out = { ...msg, payload: { messages } };
                 node.send(out);
                 if (debug) {
                     node.log('iter-messages output: ' + JSON.stringify(out));

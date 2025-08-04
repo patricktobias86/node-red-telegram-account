@@ -19,6 +19,7 @@ Below is a short description of each node. For a full list of configuration opti
 | **promote-admin** | Grants admin rights to a user in a group or channel with configurable permissions. |
 | **resolve-userid** | Converts a Telegram username to its numeric user ID. |
 
+All nodes forward any properties on the incoming `msg` outside of `msg.payload` unchanged.
 
 All nodes provide a **Debug** checkbox. When enabled the node will log its input and output messages to aid troubleshooting.
 
