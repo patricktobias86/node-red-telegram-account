@@ -23,3 +23,7 @@ All notable changes to this project will be documented in this file.
 ### Fixed
 - All nodes now preserve properties on the incoming message outside of the payload.
 
+## [1.1.12] - 2025-08-06
+### Fixed
+- Auth node now emits the generated `stringSession` so it can be used by other nodes.
+

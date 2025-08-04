@@ -17,7 +17,7 @@ This package contains a collection of Node‑RED nodes built on top of [GramJS](
 See [docs/NODES.md](docs/NODES.md) for a detailed description of every node. Below is a quick summary:
 
 - **config** – stores your API credentials and caches sessions for reuse.
-- **auth** – interactive login that outputs a `stringSession`.
+- **auth** – interactive login that outputs a `stringSession` (also set on `msg.stringSession`).
 - **receiver** – emits messages for every incoming update (with optional ignore list). Event listeners are cleaned up on node close so redeploys won't duplicate messages.
 - **command** – triggers when an incoming message matches a command or regex. Event listeners are removed on redeploy to prevent duplicates.
 - **send-message** – sends text or media messages with rich options.

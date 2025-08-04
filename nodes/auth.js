@@ -49,6 +49,7 @@ module.exports = function (RED) {
                 });
 
                 const stringSession = client.session.save();
+                await client.disconnect();
 
                 console.log("Sending result to output:", {
                     stringSession,
@@ -57,19 +58,19 @@ module.exports = function (RED) {
                         { type: "session_token", text: "Copy this stringSession to use in other nodes." }
                     ]
                 });
-
-                 const out = {
-                     ...msg,
-                     topic: "auth_success",
-                     payload: {
-                         stringSession,
-                         message: "Authorization successful!"
-                     }
-                 };
-                 node.send(out);
-                 if (debug) {
-                     node.log('auth output: ' + JSON.stringify(out));
-                 }
+                const out = {
+                    ...msg,
+                    topic: "auth_success",
+                    stringSession,
+                    payload: {
+                        stringSession,
+                        message: "Authorization successful!",
+                    }
+                };
+                node.send(out);
+                if (debug) {
+                    node.log('auth output: ' + JSON.stringify(out));
+                }
 
                 node.status({ fill: "green", shape: "dot", text: "Authenticated" });
 
