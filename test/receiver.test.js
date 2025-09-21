@@ -40,4 +40,28 @@ describe('Receiver node', function() {
     assert.strictEqual(removeCalls[0].fn, addCalls[0].fn);
     assert.strictEqual(removeCalls[0].event, addCalls[0].event);
   });
+
+  it('skips media updates when size exceeds threshold', function() {
+    const { NodeCtor, addCalls } = load();
+    const sent = [];
+    const node = new NodeCtor({config:'c', ignore:'', maxFileSizeMb:'5'});
+    node.send = (msg) => sent.push(msg);
+    const handler = addCalls[0].fn;
+
+    handler({ message: { fromId: { userId: 123 }, media: { document: { size: 6 * 1024 * 1024 } } } });
+
+    assert.strictEqual(sent.length, 0);
+  });
+
+  it('delivers media updates when size is below threshold', function() {
+    const { NodeCtor, addCalls } = load();
+    const sent = [];
+    const node = new NodeCtor({config:'c', ignore:'', maxFileSizeMb:'5'});
+    node.send = (msg) => sent.push(msg);
+    const handler = addCalls[0].fn;
+
+    handler({ message: { fromId: { userId: 123 }, media: { document: { size: 3 * 1024 * 1024 } } } });
+
+    assert.strictEqual(sent.length, 1);
+  });
 });

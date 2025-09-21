@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.1.15] - 2025-09-21
+### Added
+- Receiver node option to drop updates when media exceeds a configurable size threshold, preventing large downloads.
+
 ## [1.1.7] - 2025-07-22
 ### Added
 - Mocha tests for the configuration node ensure sessions are reused correctly.
@@ -26,4 +30,3 @@ All notable changes to this project will be documented in this file.
 ## [1.1.12] - 2025-08-06
 ### Fixed
 - Auth node now emits the generated `stringSession` so it can be used by other nodes.
-

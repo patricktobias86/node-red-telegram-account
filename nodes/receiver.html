@@ -7,7 +7,8 @@
             name: { value: '' },
             config: { type: 'config', required: false },
             ignore: { value:""},
-            debug: { value: false }
+            debug: { value: false },
+            maxFileSizeMb: { value: "" }
         },
         inputs: 1,
         outputs: 1,
@@ -49,14 +50,27 @@
     </div>
     <div class="form-row">
       <label for="node-input-ignore">
-        <i class="fa fa-tag"></i> Config
+        <i class="fa fa-user-times"></i> Ignore list
       </label>
       <textarea
         type="text"
         id="node-input-ignore"
-        placeholder="Config"
+        placeholder="Enter user IDs, one per line"
         style="width: 60%"
       ></textarea>
+    </div>
+    <div class="form-row">
+      <label for="node-input-maxFileSizeMb">
+        <i class="fa fa-download"></i> Max media size (MB)
+      </label>
+      <input
+        type="number"
+        id="node-input-maxFileSizeMb"
+        placeholder="Leave blank to disable"
+        min="0"
+        step="0.1"
+        style="width: 60%"
+      />
     </div>
   </script>
 
@@ -86,6 +100,11 @@
             <span class="property-type">string</span>
         </dt>
         <dd>A newline-separated list of user IDs to ignore. Messages from these users will not trigger the output.</dd>
+
+        <dt>Max media size (MB)
+            <span class="property-type">number</span>
+        </dt>
+        <dd>Skip updates that include media exceeding this size. Leave blank to process all media.</dd>
     </dl>
 
     <h3>Details</h3>
@@ -131,5 +150,3 @@
         <li>For advanced filtering based on message content, consider chaining this node with additional processing nodes in Node-RED.</li>
     </ul>
 </script>
-
-
