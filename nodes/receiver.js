@@ -16,7 +16,7 @@ module.exports = function (RED) {
         if (debug) {
             node.log('receiver update: ' + util.inspect(update, { depth: null }));
         }
-        if (update.message.fromId != null && !ignore.includes(update.message.fromId.userId.toString())) {
+        if (update.message.fromId != null && update.message.fromId.userId != null && !ignore.includes(update.message.fromId.userId.toString())) {
             const out = { payload: { update } };
             node.send(out);
             if (debug) {
