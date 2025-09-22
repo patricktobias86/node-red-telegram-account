@@ -44,7 +44,7 @@ describe('Receiver node', function() {
   it('skips media updates when size exceeds threshold', function() {
     const { NodeCtor, addCalls } = load();
     const sent = [];
-    const node = new NodeCtor({config:'c', ignore:'', maxFileSizeMb:'5'});
+    const node = new NodeCtor({config:'c', ignore:'', ignoreMessageTypes:'', maxFileSizeMb:'5'});
     node.send = (msg) => sent.push(msg);
     const handler = addCalls[0].fn;
 
@@ -56,11 +56,35 @@ describe('Receiver node', function() {
   it('delivers media updates when size is below threshold', function() {
     const { NodeCtor, addCalls } = load();
     const sent = [];
-    const node = new NodeCtor({config:'c', ignore:'', maxFileSizeMb:'5'});
+    const node = new NodeCtor({config:'c', ignore:'', ignoreMessageTypes:'', maxFileSizeMb:'5'});
     node.send = (msg) => sent.push(msg);
     const handler = addCalls[0].fn;
 
     handler({ message: { fromId: { userId: 123 }, media: { document: { size: 3 * 1024 * 1024 } } } });
+
+    assert.strictEqual(sent.length, 1);
+  });
+
+  it('skips updates when media type is ignored', function() {
+    const { NodeCtor, addCalls } = load();
+    const sent = [];
+    const node = new NodeCtor({config:'c', ignore:'', ignoreMessageTypes:'video\ndocument', maxFileSizeMb:''});
+    node.send = (msg) => sent.push(msg);
+    const handler = addCalls[0].fn;
+
+    handler({ message: { fromId: { userId: 123 }, media: { document: { mimeType: 'video/mp4', attributes: [{ className: 'DocumentAttributeVideo' }] } } } });
+
+    assert.strictEqual(sent.length, 0);
+  });
+
+  it('delivers updates when media type is not ignored', function() {
+    const { NodeCtor, addCalls } = load();
+    const sent = [];
+    const node = new NodeCtor({config:'c', ignore:'', ignoreMessageTypes:'voice', maxFileSizeMb:''});
+    node.send = (msg) => sent.push(msg);
+    const handler = addCalls[0].fn;
+
+    handler({ message: { fromId: { userId: 123 }, media: { document: { mimeType: 'video/mp4', attributes: [{ className: 'DocumentAttributeVideo' }] } } } });
 
     assert.strictEqual(sent.length, 1);
   });

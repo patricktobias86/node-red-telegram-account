@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.1.16] - 2025-09-22
+### Added
+- Receiver node option to ignore configurable message types (such as videos or documents) to prevent oversized uploads.
+### Changed
+- Receiver node collects detailed media type metadata to power the new filter while keeping debug logging informative.
+
 ## [1.1.15] - 2025-09-21
 ### Added
 - Receiver node option to drop updates when media exceeds a configurable size threshold, preventing large downloads.
