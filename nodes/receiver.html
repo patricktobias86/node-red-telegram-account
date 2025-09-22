@@ -7,6 +7,7 @@
             name: { value: '' },
             config: { type: 'config', required: false },
             ignore: { value:""},
+            ignoreMessageTypes: { value: "" },
             debug: { value: false },
             maxFileSizeMb: { value: "" }
         },
@@ -60,6 +61,17 @@
       ></textarea>
     </div>
     <div class="form-row">
+      <label for="node-input-ignoreMessageTypes">
+        <i class="fa fa-ban"></i> Ignore message types
+      </label>
+      <textarea
+        id="node-input-ignoreMessageTypes"
+        placeholder="e.g. video, document, sticker"
+        style="width: 60%"
+      ></textarea>
+      <p class="form-tips">Separate types with commas or new lines.</p>
+    </div>
+    <div class="form-row">
       <label for="node-input-maxFileSizeMb">
         <i class="fa fa-download"></i> Max media size (MB)
       </label>
@@ -100,6 +112,11 @@
             <span class="property-type">string</span>
         </dt>
         <dd>A newline-separated list of user IDs to ignore. Messages from these users will not trigger the output.</dd>
+
+        <dt>Ignore message types
+            <span class="property-type">string</span>
+        </dt>
+        <dd>List of message or media types to skip (for example <code>video</code>, <code>document</code>, or <code>sticker</code>). Separate multiple entries with commas or new lines.</dd>
 
         <dt>Max media size (MB)
             <span class="property-type">number</span>
@@ -147,6 +164,7 @@
     <ul>
         <li>Ensure the Telegram bot has sufficient permissions to receive messages in the configured chat or channel.</li>
         <li>The <b>Ignore List</b> only filters messages based on the sender's user ID.</li>
+        <li>Use <b>Ignore message types</b> to drop updates that contain media you don't want to process, such as large videos or documents.</li>
         <li>For advanced filtering based on message content, consider chaining this node with additional processing nodes in Node-RED.</li>
     </ul>
 </script>

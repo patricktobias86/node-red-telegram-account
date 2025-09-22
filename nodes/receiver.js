@@ -1,6 +1,153 @@
 const { NewMessage } = require("telegram/events");
 const util = require("util");
 
+const splitList = (value) => {
+    if (typeof value !== 'string') {
+        return [];
+    }
+    return value
+        .split(/[\n,\r]/)
+        .map((entry) => entry.trim())
+        .filter(Boolean);
+};
+
+const toLowerCaseSet = (values) => {
+    const result = new Set();
+    for (const value of values) {
+        result.add(value.toLowerCase());
+    }
+    return result;
+};
+
+const addType = (target, value) => {
+    if (!value) {
+        return;
+    }
+    target.add(String(value).toLowerCase());
+};
+
+const collectDocumentTypes = (document, types) => {
+    if (!document) {
+        return;
+    }
+
+    addType(types, 'document');
+
+    if (Array.isArray(document.attributes)) {
+        for (const attribute of document.attributes) {
+            if (!attribute) {
+                continue;
+            }
+            const attributeName = attribute.className || attribute._;
+            addType(types, attributeName);
+            switch (attributeName) {
+                case 'DocumentAttributeVideo':
+                    addType(types, 'video');
+                    break;
+                case 'DocumentAttributeAudio':
+                    addType(types, 'audio');
+                    if (attribute.voice) {
+                        addType(types, 'voice');
+                    }
+                    break;
+                case 'DocumentAttributeAnimated':
+                    addType(types, 'animation');
+                    break;
+                case 'DocumentAttributeSticker':
+                    addType(types, 'sticker');
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
+
+    if (typeof document.mimeType === 'string') {
+        const mimeType = document.mimeType.toLowerCase();
+        addType(types, mimeType);
+        const slashIndex = mimeType.indexOf('/');
+        if (slashIndex > 0) {
+            addType(types, mimeType.slice(0, slashIndex));
+        }
+        if (mimeType.startsWith('video/')) {
+            addType(types, 'video');
+        } else if (mimeType.startsWith('audio/')) {
+            addType(types, 'audio');
+        } else if (mimeType.startsWith('image/')) {
+            addType(types, 'image');
+        }
+    }
+};
+
+const collectMediaTypes = (media, types) => {
+    if (!media) {
+        return;
+    }
+    addType(types, 'media');
+    addType(types, media.className || media._);
+
+    if (media.document) {
+        collectDocumentTypes(media.document, types);
+    }
+    if (media.photo) {
+        addType(types, 'photo');
+    }
+    if (media.webpage) {
+        addType(types, 'webpage');
+        if (media.webpage.document) {
+            collectDocumentTypes(media.webpage.document, types);
+        }
+        if (media.webpage.photo) {
+            addType(types, 'photo');
+        }
+    }
+    if (media.poll) {
+        addType(types, 'poll');
+    }
+    if (media.contact) {
+        addType(types, 'contact');
+    }
+    if (media.geo || media.geoPoint) {
+        addType(types, 'location');
+    }
+    if (media.venue) {
+        addType(types, 'venue');
+    }
+    if (media.game) {
+        addType(types, 'game');
+    }
+    if (media.sticker) {
+        addType(types, 'sticker');
+    }
+};
+
+const collectMessageTypes = (message) => {
+    const types = new Set();
+    if (!message || typeof message !== 'object') {
+        return types;
+    }
+
+    collectMediaTypes(message.media, types);
+
+    if (typeof message.message === 'string' && message.message.length > 0 && !message.media) {
+        addType(types, 'text');
+    }
+
+    if (message.action) {
+        const actionName = message.action.className || message.action._;
+        addType(types, actionName);
+        if (actionName) {
+            addType(types, 'service');
+        }
+    }
+
+    if (message.ttlPeriod) {
+        addType(types, 'self-destructing');
+    }
+
+    return types;
+};
+
 module.exports = function (RED) {
   function Receiver(config) {
     RED.nodes.createNode(this, config);
@@ -8,10 +155,8 @@ module.exports = function (RED) {
     this.debugEnabled = config.debug;
     var node = this;
     const client =  this.config.client;
-    const ignore = (config.ignore || "")
-        .split(/\n/)
-        .map((entry) => entry.trim())
-        .filter(Boolean);
+    const ignore = splitList(config.ignore || "");
+    const ignoredMessageTypes = toLowerCaseSet(splitList(config.ignoreMessageTypes || ""));
     const maxFileSizeMb = Number(config.maxFileSizeMb);
     const maxFileSizeBytes = Number.isFinite(maxFileSizeMb) && maxFileSizeMb > 0
         ? maxFileSizeMb * 1024 * 1024
@@ -104,6 +249,17 @@ module.exports = function (RED) {
         const message = update && update.message;
         if (!message) {
             return;
+        }
+
+        if (ignoredMessageTypes.size > 0) {
+            const messageTypes = collectMessageTypes(message);
+            const shouldIgnoreType = Array.from(messageTypes).some((type) => ignoredMessageTypes.has(type));
+            if (shouldIgnoreType) {
+                if (debug) {
+                    node.log(`receiver ignoring update with types: ${Array.from(messageTypes).join(', ')}`);
+                }
+                return;
+            }
         }
 
         if (maxFileSizeBytes != null) {
