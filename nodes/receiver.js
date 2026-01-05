@@ -185,8 +185,26 @@ const toPeerInfo = (peer) => {
 };
 
 const toSafeNumber = (value) => {
+    if (value && typeof value === 'object') {
+        // GramJS can represent large integers using custom Integer wrappers.
+        // Those often serialize/log as `Integer { value: 123n }`.
+        if ('value' in value) {
+            return toSafeNumber(value.value);
+        }
+    }
     if (typeof value === 'number') {
         return Number.isFinite(value) ? value : null;
+    }
+    if (typeof value === 'string') {
+        const trimmed = value.trim();
+        if (/^-?\d+$/.test(trimmed)) {
+            try {
+                return toSafeNumber(BigInt(trimmed));
+            } catch (err) {
+                return null;
+            }
+        }
+        return null;
     }
     if (typeof value === 'bigint') {
         const result = Number(value);
@@ -413,11 +431,19 @@ module.exports = function (RED) {
         }
     };
 
+    const debugSend = (payload) => {
+        if (!node.debugEnabled) {
+            return;
+        }
+        node.send([null, { payload }]);
+    };
+
     const event = new Raw({});
     const handler = (rawUpdate) => {
         const debug = node.debugEnabled;
         if (debug) {
             node.log('receiver raw update: ' + util.inspect(rawUpdate, { depth: null }));
+            debugSend({ event: 'rawUpdate', rawUpdate });
         }
 
         const extracted = extractMessageEvents(rawUpdate);
@@ -425,12 +451,14 @@ module.exports = function (RED) {
             // Raw emits *all* MTProto updates; many are not message-bearing updates (typing, reads, etc.).
             // We do not output those by default, but we also do not silently hide that they occurred.
             debugLog(`receiver ignoring non-message MTProto update: ${getClassName(rawUpdate) || 'unknown'}`);
+            debugSend({ event: 'ignored', reason: 'non-message', rawUpdateClassName: getClassName(rawUpdate) || 'unknown' });
             return;
         }
 
         for (const { update, message } of extracted) {
             if (!message) {
                 debugLog(`receiver ignoring message update without message payload: ${getClassName(update) || 'unknown'}`);
+                debugSend({ event: 'ignored', reason: 'missing-message', updateClassName: getClassName(update) || 'unknown' });
                 continue;
             }
 
@@ -461,6 +489,7 @@ module.exports = function (RED) {
                 const shouldIgnoreType = Array.from(messageTypes).some((type) => ignoredMessageTypes.has(type));
                 if (shouldIgnoreType) {
                     debugLog(`receiver ignoring message due to ignoreMessageTypes; types=${Array.from(messageTypes).join(', ')}`);
+                    debugSend({ event: 'ignored', reason: 'ignoreMessageTypes', messageTypes: Array.from(messageTypes) });
                     continue;
                 }
             }
@@ -469,6 +498,7 @@ module.exports = function (RED) {
                 const mediaSize = extractMediaSize(message.media);
                 if (mediaSize != null && mediaSize > maxFileSizeBytes) {
                     debugLog(`receiver ignoring message due to maxFileSizeMb; mediaSize=${mediaSize} limitBytes=${maxFileSizeBytes}`);
+                    debugSend({ event: 'ignored', reason: 'maxFileSizeMb', mediaSize, limitBytes: maxFileSizeBytes });
                     continue;
                 }
             }
@@ -478,6 +508,7 @@ module.exports = function (RED) {
             // Now we only apply the ignore list when we can confidently identify a user sender.
             if (senderType === 'user' && senderId != null && ignore.includes(String(senderId))) {
                 debugLog(`receiver ignoring message due to ignore list; userId=${senderId}`);
+                debugSend({ event: 'ignored', reason: 'ignore', userId: senderId });
                 continue;
             }
 
@@ -495,7 +526,11 @@ module.exports = function (RED) {
                 }
             };
 
-            node.send(out);
+            if (debug) {
+                node.send([out, { payload: { event: 'output', out } }]);
+            } else {
+                node.send(out);
+            }
             if (debug) {
                 node.log('receiver output: ' + util.inspect(out, { depth: null }));
             }

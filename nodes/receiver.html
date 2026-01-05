@@ -12,7 +12,7 @@
             maxFileSizeMb: { value: "" }
         },
         inputs: 1,
-        outputs: 1,
+        outputs: 2,
         paletteLabel: 'receiver',
         label: function() {
             return this.name||'receiver';
@@ -95,10 +95,22 @@
 
     <h3>Outputs</h3>
     <dl class="message-properties">
+        <dt>output 1
+            <span class="property-type">message</span>
+        </dt>
+        <dd>The parsed incoming Telegram message.</dd>
+        <dt>output 2
+            <span class="property-type">message</span>
+        </dt>
+        <dd>Debug messages emitted when <b>Debug</b> is enabled (suitable for wiring to a Node-RED debug node).</dd>
         <dt>payload.update
             <span class="property-type">object</span>
         </dt>
         <dd>The raw Telegram update object containing details about the incoming message, sender, chat, and metadata.</dd>
+        <dt>payload.chatId
+            <span class="property-type">number</span>
+        </dt>
+        <dd>The normalized conversation identifier (user ID for private chats, chat ID for legacy groups, channel ID for supergroups/channels).</dd>
     </dl>
 
     <h3>Configuration</h3>

@@ -2,8 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
-## [1.1.17] - 2026-01-05
+## [1.1.20] - 2026-01-05
+### Added
+- Receiver node now emits debug events on a second output when Debug is enabled, so you can see internal logs in the Node-RED debug sidebar.
 ### Fixed
+- Receiver node now also supports GramJS `Integer { value: ... }` wrappers when deriving `payload.chatId` / `payload.senderId`.
+- Receiver node now populates `payload.chatId` / `payload.senderId` when Telegram IDs arrive as numeric strings (common in debug/output), so downstream filters work reliably.
 - Receiver node now listens to Raw MTProto updates and derives sender/chat identity safely so valid messages (channel posts, anonymous admins, service messages, missing fromId) are no longer dropped.
 
 ## [1.1.16] - 2025-09-22

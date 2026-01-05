@@ -100,4 +100,46 @@ describe('Receiver node', function() {
 
     assert.strictEqual(sent.length, 1);
   });
+
+  it('populates chatId and senderId for string ids', function() {
+    const { NodeCtor, addCalls } = load();
+    const sent = [];
+    const node = new NodeCtor({config:'c', ignore:'', ignoreMessageTypes:'', maxFileSizeMb:''});
+    node.send = (msg) => sent.push(msg);
+    const handler = addCalls[0].fn;
+
+    handler({
+      className: 'UpdateNewChannelMessage',
+      message: {
+        fromId: { userId: '6304354944', className: 'PeerUser' },
+        peerId: { channelId: '2877134366', className: 'PeerChannel' },
+        message: 'hello'
+      }
+    });
+
+    assert.strictEqual(sent.length, 1);
+    assert.strictEqual(sent[0].payload.chatId, 2877134366);
+    assert.strictEqual(sent[0].payload.senderId, 6304354944);
+  });
+
+  it('populates chatId and senderId for Integer wrappers', function() {
+    const { NodeCtor, addCalls } = load();
+    const sent = [];
+    const node = new NodeCtor({config:'c', ignore:'', ignoreMessageTypes:'', maxFileSizeMb:''});
+    node.send = (msg) => sent.push(msg);
+    const handler = addCalls[0].fn;
+
+    handler({
+      className: 'UpdateNewChannelMessage',
+      message: {
+        fromId: { userId: { value: 6304354944n }, className: 'PeerUser' },
+        peerId: { channelId: { value: 2877134366n }, className: 'PeerChannel' },
+        message: 'hello'
+      }
+    });
+
+    assert.strictEqual(sent.length, 1);
+    assert.strictEqual(sent[0].payload.chatId, 2877134366);
+    assert.strictEqual(sent[0].payload.senderId, 6304354944);
+  });
 });

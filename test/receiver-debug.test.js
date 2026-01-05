@@ -4,6 +4,7 @@ const proxyquire = require('proxyquire').noPreserveCache();
 function load() {
   const addCalls = [];
   const logs = [];
+  const sends = [];
   class TelegramClientStub {
     addEventHandler(fn, event) { addCalls.push({fn, event}); }
     removeEventHandler() {}
@@ -18,7 +19,7 @@ function load() {
         node._events = {};
         node.on = (e, fn) => { node._events[e] = fn; };
         node.log = (msg) => logs.push(msg);
-        node.send = () => {};
+        node.send = (msg) => sends.push(msg);
       },
       registerType(name, ctor) { NodeCtor = ctor; },
       getNode() { return configNode; }
@@ -29,12 +30,12 @@ function load() {
     'telegram/events': { Raw: RawStub }
   })(RED);
 
-  return { NodeCtor, addCalls, logs };
+  return { NodeCtor, addCalls, logs, sends };
 }
 
 describe('Receiver node debug with BigInt', function() {
   it('logs update and output without throwing', function() {
-    const { NodeCtor, addCalls, logs } = load();
+    const { NodeCtor, addCalls, logs, sends } = load();
     const node = new NodeCtor({config:'c', ignore:'', debug:true});
     const handler = addCalls[0].fn;
     assert.doesNotThrow(() => handler({
@@ -43,5 +44,8 @@ describe('Receiver node debug with BigInt', function() {
     }));
     assert(logs.some(l => l.includes('receiver raw update')));
     assert(logs.some(l => l.includes('receiver output')));
+    assert(sends.some((msg) => Array.isArray(msg) && msg.length === 2));
+    assert(sends.some((msg) => Array.isArray(msg) && msg[1] && msg[1].payload && msg[1].payload.event === 'rawUpdate'));
+    assert(sends.some((msg) => Array.isArray(msg) && msg[1] && msg[1].payload && msg[1].payload.event === 'output'));
   });
 });
