@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.1.17] - 2026-01-05
+### Fixed
+- Receiver node now listens to Raw MTProto updates and derives sender/chat identity safely so valid messages (channel posts, anonymous admins, service messages, missing fromId) are no longer dropped.
+
 ## [1.1.16] - 2025-09-22
 ### Added
 - Receiver node option to ignore configurable message types (such as videos or documents) to prevent oversized uploads.

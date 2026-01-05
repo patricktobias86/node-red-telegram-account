@@ -8,7 +8,7 @@ function load() {
     addEventHandler(fn, event) { addCalls.push({fn, event}); }
     removeEventHandler(fn, event) { removeCalls.push({fn, event}); }
   }
-  class NewMessageStub {}
+  class RawStub {}
 
   let NodeCtor;
   const configNode = { client: new TelegramClientStub() };
@@ -24,7 +24,7 @@ function load() {
   };
 
   proxyquire('../nodes/receiver.js', {
-    'telegram/events': { NewMessage: NewMessageStub }
+    'telegram/events': { Raw: RawStub }
   })(RED);
 
   return { NodeCtor, addCalls, removeCalls };
@@ -48,7 +48,10 @@ describe('Receiver node', function() {
     node.send = (msg) => sent.push(msg);
     const handler = addCalls[0].fn;
 
-    handler({ message: { fromId: { userId: 123 }, media: { document: { size: 6 * 1024 * 1024 } } } });
+    handler({
+      className: 'UpdateNewMessage',
+      message: { fromId: { userId: 123 }, peerId:{ userId: 123 }, media: { document: { size: 6 * 1024 * 1024 } } }
+    });
 
     assert.strictEqual(sent.length, 0);
   });
@@ -60,7 +63,10 @@ describe('Receiver node', function() {
     node.send = (msg) => sent.push(msg);
     const handler = addCalls[0].fn;
 
-    handler({ message: { fromId: { userId: 123 }, media: { document: { size: 3 * 1024 * 1024 } } } });
+    handler({
+      className: 'UpdateNewMessage',
+      message: { fromId: { userId: 123 }, peerId:{ userId: 123 }, media: { document: { size: 3 * 1024 * 1024 } } }
+    });
 
     assert.strictEqual(sent.length, 1);
   });
@@ -72,7 +78,10 @@ describe('Receiver node', function() {
     node.send = (msg) => sent.push(msg);
     const handler = addCalls[0].fn;
 
-    handler({ message: { fromId: { userId: 123 }, media: { document: { mimeType: 'video/mp4', attributes: [{ className: 'DocumentAttributeVideo' }] } } } });
+    handler({
+      className: 'UpdateNewMessage',
+      message: { fromId: { userId: 123 }, peerId:{ userId: 123 }, media: { document: { mimeType: 'video/mp4', attributes: [{ className: 'DocumentAttributeVideo' }] } } }
+    });
 
     assert.strictEqual(sent.length, 0);
   });
@@ -84,7 +93,10 @@ describe('Receiver node', function() {
     node.send = (msg) => sent.push(msg);
     const handler = addCalls[0].fn;
 
-    handler({ message: { fromId: { userId: 123 }, media: { document: { mimeType: 'video/mp4', attributes: [{ className: 'DocumentAttributeVideo' }] } } } });
+    handler({
+      className: 'UpdateNewMessage',
+      message: { fromId: { userId: 123 }, peerId:{ userId: 123 }, media: { document: { mimeType: 'video/mp4', attributes: [{ className: 'DocumentAttributeVideo' }] } } }
+    });
 
     assert.strictEqual(sent.length, 1);
   });

@@ -8,7 +8,7 @@ function load() {
     addEventHandler(fn, event) { addCalls.push({fn, event}); }
     removeEventHandler() {}
   }
-  class NewMessageStub {}
+  class RawStub {}
 
   let NodeCtor;
   const configNode = { client: new TelegramClientStub() };
@@ -26,7 +26,7 @@ function load() {
   };
 
   proxyquire('../nodes/receiver.js', {
-    'telegram/events': { NewMessage: NewMessageStub }
+    'telegram/events': { Raw: RawStub }
   })(RED);
 
   return { NodeCtor, addCalls, logs };
@@ -37,8 +37,11 @@ describe('Receiver node debug with BigInt', function() {
     const { NodeCtor, addCalls, logs } = load();
     const node = new NodeCtor({config:'c', ignore:'', debug:true});
     const handler = addCalls[0].fn;
-    assert.doesNotThrow(() => handler({ message: { fromId:{userId:1n} } }));
-    assert(logs.some(l => l.includes('receiver update')));
+    assert.doesNotThrow(() => handler({
+      className: 'UpdateNewMessage',
+      message: { fromId:{userId:1n}, peerId:{userId:1n}, message:'hi' }
+    }));
+    assert(logs.some(l => l.includes('receiver raw update')));
     assert(logs.some(l => l.includes('receiver output')));
   });
 });

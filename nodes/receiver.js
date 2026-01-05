@@ -1,4 +1,4 @@
-const { NewMessage } = require("telegram/events");
+const { Raw } = require("telegram/events");
 const util = require("util");
 
 const splitList = (value) => {
@@ -148,6 +148,184 @@ const collectMessageTypes = (message) => {
     return types;
 };
 
+const getClassName = (value) => {
+    if (!value || typeof value !== 'object') {
+        return undefined;
+    }
+    return value.className || value._;
+};
+
+const toPeerInfo = (peer) => {
+    if (!peer || typeof peer !== 'object') {
+        return null;
+    }
+
+    const className = getClassName(peer);
+    const userId = peer.userId ?? peer.user_id;
+    const chatId = peer.chatId ?? peer.chat_id;
+    const channelId = peer.channelId ?? peer.channel_id;
+
+    // GramJS TL objects represent peers as PeerUser / PeerChat / PeerChannel.
+    // MTProto updates can omit fromId (anonymous admins, channel posts, etc.), so
+    // we normalize peer identity from whichever peer object we have.
+    if (userId != null) {
+        return { type: 'user', userId, chatId: null, channelId: null, peer };
+    }
+    if (chatId != null) {
+        return { type: 'chat', userId: null, chatId, channelId: null, peer };
+    }
+    if (channelId != null) {
+        return { type: 'channel', userId: null, chatId: null, channelId, peer };
+    }
+
+    if (className) {
+        return { type: className, userId: null, chatId: null, channelId: null, peer };
+    }
+    return { type: 'unknown', userId: null, chatId: null, channelId: null, peer };
+};
+
+const toSafeNumber = (value) => {
+    if (typeof value === 'number') {
+        return Number.isFinite(value) ? value : null;
+    }
+    if (typeof value === 'bigint') {
+        const result = Number(value);
+        return Number.isFinite(result) ? result : Number.MAX_SAFE_INTEGER;
+    }
+    return null;
+};
+
+const peerChatId = (peerInfo) => {
+    if (!peerInfo) {
+        return null;
+    }
+    // For Node-RED flows "chatId" typically means "the conversation identifier".
+    // For private chats that's the userId; for groups it's chatId; for channels it's channelId.
+    if (peerInfo.type === 'user') {
+        return toSafeNumber(peerInfo.userId);
+    }
+    if (peerInfo.type === 'chat') {
+        return toSafeNumber(peerInfo.chatId);
+    }
+    if (peerInfo.type === 'channel') {
+        return toSafeNumber(peerInfo.channelId);
+    }
+    return null;
+};
+
+const buildPeerUser = (userId) => ({ className: 'PeerUser', userId });
+const buildPeerChat = (chatId) => ({ className: 'PeerChat', chatId });
+
+const toDerivedMessage = (update) => {
+    const className = getClassName(update);
+    if (className === 'UpdateShortMessage') {
+        const userId = update.userId ?? update.user_id;
+        return {
+            className: 'Message',
+            id: update.id,
+            date: update.date,
+            out: update.out,
+            silent: update.silent,
+            // In UpdateShortMessage, userId is the peer and also the sender for incoming messages.
+            peerId: userId != null ? buildPeerUser(userId) : undefined,
+            fromId: userId != null ? buildPeerUser(userId) : undefined,
+            message: update.message,
+            entities: update.entities,
+            fwdFrom: update.fwdFrom,
+            viaBotId: update.viaBotId,
+            replyTo: update.replyTo,
+            ttlPeriod: update.ttlPeriod,
+            media: update.media
+        };
+    }
+
+    if (className === 'UpdateShortChatMessage') {
+        const chatId = update.chatId ?? update.chat_id;
+        const fromId = update.fromId ?? update.from_id;
+        return {
+            className: 'Message',
+            id: update.id,
+            date: update.date,
+            out: update.out,
+            silent: update.silent,
+            peerId: chatId != null ? buildPeerChat(chatId) : undefined,
+            fromId: fromId != null ? buildPeerUser(fromId) : undefined,
+            message: update.message,
+            entities: update.entities,
+            fwdFrom: update.fwdFrom,
+            viaBotId: update.viaBotId,
+            replyTo: update.replyTo,
+            ttlPeriod: update.ttlPeriod,
+            media: update.media
+        };
+    }
+
+    if (className === 'UpdateShortSentMessage') {
+        // This update doesn't include a peer; it's still a real MTProto message update.
+        // We emit it with a best-effort message shape so flows can still react.
+        return {
+            className: 'Message',
+            id: update.id,
+            date: update.date,
+            out: true,
+            silent: update.silent,
+            message: update.message,
+            entities: update.entities,
+            media: update.media
+        };
+    }
+
+    return null;
+};
+
+const extractMessageEvents = (rawUpdate) => {
+    // Raw MTProto updates can be nested (Updates / UpdatesCombined / UpdateShort).
+    // We must unwrap them here instead of relying on NewMessage(), which can miss
+    // valid message updates (e.g. channel posts, edits, anonymous admins).
+    const results = [];
+
+    const walk = (update) => {
+        if (!update || typeof update !== 'object') {
+            return;
+        }
+
+        const className = getClassName(update);
+
+        if (Array.isArray(update.updates)) {
+            for (const nested of update.updates) {
+                walk(nested);
+            }
+            return;
+        }
+
+        if (update.update) {
+            walk(update.update);
+            return;
+        }
+
+        if (className === 'UpdateNewMessage' ||
+            className === 'UpdateNewChannelMessage' ||
+            className === 'UpdateEditMessage' ||
+            className === 'UpdateEditChannelMessage') {
+            if (update.message) {
+                results.push({ update, message: update.message });
+            } else {
+                results.push({ update, message: null });
+            }
+            return;
+        }
+
+        const derived = toDerivedMessage(update);
+        if (derived) {
+            results.push({ update, message: derived });
+            return;
+        }
+    };
+
+    walk(rawUpdate);
+    return results;
+};
+
 module.exports = function (RED) {
   function Receiver(config) {
     RED.nodes.createNode(this, config);
@@ -162,17 +340,6 @@ module.exports = function (RED) {
         ? maxFileSizeMb * 1024 * 1024
         : null;
 
-    const toNumber = (value) => {
-        if (typeof value === 'number') {
-            return value;
-        }
-        if (typeof value === 'bigint') {
-            const result = Number(value);
-            return Number.isFinite(result) ? result : Number.MAX_SAFE_INTEGER;
-        }
-        return undefined;
-    };
-
     const extractPhotoSize = (photo) => {
         if (!photo || !Array.isArray(photo.sizes)) {
             return null;
@@ -184,13 +351,13 @@ module.exports = function (RED) {
             }
             if (Array.isArray(size.sizes)) {
                 for (const nested of size.sizes) {
-                    const nestedValue = toNumber(nested);
+                    const nestedValue = toSafeNumber(nested);
                     if (nestedValue != null && nestedValue > max) {
                         max = nestedValue;
                     }
                 }
             }
-            const value = toNumber(size.size ?? size.length ?? size.bytes);
+            const value = toSafeNumber(size.size ?? size.length ?? size.bytes);
             if (value != null && value > max) {
                 max = value;
             }
@@ -204,7 +371,7 @@ module.exports = function (RED) {
         }
 
         if (media.document && media.document.size != null) {
-            const value = toNumber(media.document.size);
+            const value = toSafeNumber(media.document.size);
             if (value != null) {
                 return value;
             }
@@ -219,7 +386,7 @@ module.exports = function (RED) {
 
         if (media.webpage) {
             const { document, photo } = media.webpage;
-            const docSize = document && toNumber(document.size);
+            const docSize = document && toSafeNumber(document.size);
             if (docSize != null) {
                 return docSize;
             }
@@ -231,7 +398,7 @@ module.exports = function (RED) {
 
         const className = media.className || media._;
         if ((className === 'MessageMediaDocument' || className === 'MessageMediaPhoto') && media.size != null) {
-            const value = toNumber(media.size);
+            const value = toSafeNumber(media.size);
             if (value != null) {
                 return value;
             }
@@ -240,45 +407,94 @@ module.exports = function (RED) {
         return null;
     };
 
-    const event = new NewMessage();
-    const handler = (update) => {
+    const debugLog = (message) => {
+        if (node.debugEnabled) {
+            node.log(message);
+        }
+    };
+
+    const event = new Raw({});
+    const handler = (rawUpdate) => {
         const debug = node.debugEnabled;
         if (debug) {
-            node.log('receiver update: ' + util.inspect(update, { depth: null }));
+            node.log('receiver raw update: ' + util.inspect(rawUpdate, { depth: null }));
         }
-        const message = update && update.message;
-        if (!message) {
+
+        const extracted = extractMessageEvents(rawUpdate);
+        if (extracted.length === 0) {
+            // Raw emits *all* MTProto updates; many are not message-bearing updates (typing, reads, etc.).
+            // We do not output those by default, but we also do not silently hide that they occurred.
+            debugLog(`receiver ignoring non-message MTProto update: ${getClassName(rawUpdate) || 'unknown'}`);
             return;
         }
 
-        if (ignoredMessageTypes.size > 0) {
+        for (const { update, message } of extracted) {
+            if (!message) {
+                debugLog(`receiver ignoring message update without message payload: ${getClassName(update) || 'unknown'}`);
+                continue;
+            }
+
             const messageTypes = collectMessageTypes(message);
-            const shouldIgnoreType = Array.from(messageTypes).some((type) => ignoredMessageTypes.has(type));
-            if (shouldIgnoreType) {
-                if (debug) {
-                    node.log(`receiver ignoring update with types: ${Array.from(messageTypes).join(', ')}`);
+            const isSilent = Boolean(message.silent || update.silent);
+
+            const peer = toPeerInfo(message.peerId || message.toId);
+
+            // Do NOT assume message.fromId.userId exists.
+            // fromId can be PeerUser / PeerChat / PeerChannel, can be missing (channel posts),
+            // and can represent anonymous admins. Prefer fromId when present; otherwise fall back
+            // to the chat peer for channel posts to avoid dropping valid messages.
+            const sender =
+                toPeerInfo(message.fromId) ||
+                (message.senderId != null ? toPeerInfo(buildPeerUser(message.senderId)) : null) ||
+                (message.post ? peer : null);
+
+            const senderType = sender ? sender.type : 'unknown';
+            const senderId =
+                senderType === 'user' ? toSafeNumber(sender.userId) :
+                senderType === 'chat' ? toSafeNumber(sender.chatId) :
+                senderType === 'channel' ? toSafeNumber(sender.channelId) :
+                null;
+
+            const chatId = peerChatId(peer);
+
+            if (ignoredMessageTypes.size > 0) {
+                const shouldIgnoreType = Array.from(messageTypes).some((type) => ignoredMessageTypes.has(type));
+                if (shouldIgnoreType) {
+                    debugLog(`receiver ignoring message due to ignoreMessageTypes; types=${Array.from(messageTypes).join(', ')}`);
+                    continue;
                 }
-                return;
             }
-        }
 
-        if (maxFileSizeBytes != null) {
-            const mediaSize = extractMediaSize(message.media);
-            if (mediaSize != null && mediaSize > maxFileSizeBytes) {
-                if (debug) {
-                    node.log(`receiver ignoring update with media size ${mediaSize} bytes exceeding limit ${maxFileSizeBytes}`);
+            if (maxFileSizeBytes != null) {
+                const mediaSize = extractMediaSize(message.media);
+                if (mediaSize != null && mediaSize > maxFileSizeBytes) {
+                    debugLog(`receiver ignoring message due to maxFileSizeMb; mediaSize=${mediaSize} limitBytes=${maxFileSizeBytes}`);
+                    continue;
                 }
-                return;
             }
-        }
 
-        const senderId = message.fromId && message.fromId.userId;
-        if (senderId != null && ignore.includes(senderId.toString())) {
-            return;
-        }
+            // Preserve existing behavior: ignore list is a list of user IDs.
+            // Previously the node assumed message.fromId.userId always existed, which dropped valid updates.
+            // Now we only apply the ignore list when we can confidently identify a user sender.
+            if (senderType === 'user' && senderId != null && ignore.includes(String(senderId))) {
+                debugLog(`receiver ignoring message due to ignore list; userId=${senderId}`);
+                continue;
+            }
 
-        if (message.fromId != null && message.fromId.userId != null) {
-            const out = { payload: { update } };
+            const out = {
+                payload: {
+                    update,
+                    message,
+                    peer,
+                    sender,
+                    senderType,
+                    senderId,
+                    chatId,
+                    isSilent,
+                    messageTypes: Array.from(messageTypes)
+                }
+            };
+
             node.send(out);
             if (debug) {
                 node.log('receiver output: ' + util.inspect(out, { depth: null }));
