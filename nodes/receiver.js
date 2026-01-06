@@ -358,6 +358,11 @@ module.exports = function (RED) {
         ? maxFileSizeMb * 1024 * 1024
         : null;
 
+    const includeChats = splitList(config.includeChats || "");
+    const excludeChats = splitList(config.excludeChats || "");
+    const includeSenders = splitList(config.includeSenders || "");
+    const excludeSenders = splitList(config.excludeSenders || "");
+
     const extractPhotoSize = (photo) => {
         if (!photo || !Array.isArray(photo.sizes)) {
             return null;
@@ -438,7 +443,13 @@ module.exports = function (RED) {
         node.send([null, { payload }]);
     };
 
-    const event = new Raw({});
+    let rawOptions = {};
+    if (includeChats.length > 0) rawOptions.chats = includeChats;
+    if (excludeChats.length > 0) rawOptions.blacklistChats = excludeChats;
+    if (includeSenders.length > 0) rawOptions.senders = includeSenders;
+    if (excludeSenders.length > 0) rawOptions.blacklistSenders = excludeSenders;
+
+    const event = new Raw(rawOptions);
     const handler = (rawUpdate) => {
         const debug = node.debugEnabled;
         if (debug) {

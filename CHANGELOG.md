@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.1.21] - 2026-01-06
+### Fixed
+- Receiver node now correctly handles messages from channels when the sender is an anonymous admin, ensuring such messages are processed and not dropped.
+
 ## [1.1.20] - 2026-01-05
 ### Added
 - Receiver node now emits debug events on a second output when Debug is enabled, so you can see internal logs in the Node-RED debug sidebar.
