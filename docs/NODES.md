@@ -1,6 +1,6 @@
 # Node Overview
 
-The package provides a set of custom Node-RED nodes built around the [GramJS](https://gram.js.org/) library. Each node exposes a small part of the Telegram API, making it easier to build Telegram bots and automation flows.
+The package provides a set of custom Node-RED nodes built around the [TeleProto](https://www.npmjs.com/package/teleproto) library. Each node exposes a small part of the Telegram API, making it easier to build Telegram bots and automation flows.
 
 Below is a short description of each node. For a full list of configuration options see the built‑in help inside Node‑RED or open the corresponding HTML files in the `nodes/` directory.
 

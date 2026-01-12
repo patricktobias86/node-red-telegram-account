@@ -1,4 +1,4 @@
-const { TelegramClient, utils, Api } = require("telegram");
+const { TelegramClient, utils, Api } = require("teleproto");
 
 module.exports = function (RED) {
     function IterMessages(config) {

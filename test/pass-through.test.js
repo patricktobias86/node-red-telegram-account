@@ -20,8 +20,8 @@ function setup() {
   };
 
   proxyquire('../nodes/send-message.js', {
-    telegram: { TelegramClient: function() {} },
-    'telegram/Utils': { parseID: () => ({}) }
+    teleproto: { TelegramClient: function() {} },
+    'teleproto/Utils': { parseID: () => ({}) }
   })(RED);
 
   return { NodeCtor, getSent: () => sent };

@@ -1,4 +1,4 @@
-const { Raw } = require("telegram/events");
+const { Raw } = require("teleproto/events");
 const util = require("util");
 
 const splitList = (value) => {

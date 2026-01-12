@@ -29,8 +29,8 @@ function setup() {
   };
 
   proxyquire('../nodes/auth.js', {
-    telegram: { TelegramClient: TelegramClientStub },
-    'telegram/sessions': { StringSession: StringSessionStub }
+    teleproto: { TelegramClient: TelegramClientStub },
+    'teleproto/sessions': { StringSession: StringSessionStub }
   })(RED);
 
   return { NodeCtor, getSent: () => sent };

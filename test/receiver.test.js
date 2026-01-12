@@ -24,7 +24,7 @@ function load() {
   };
 
   proxyquire('../nodes/receiver.js', {
-    'telegram/events': { Raw: RawStub }
+    'teleproto/events': { Raw: RawStub }
   })(RED);
 
   return { NodeCtor, addCalls, removeCalls };

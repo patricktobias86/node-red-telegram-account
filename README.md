@@ -1,4 +1,4 @@
-# Node-RED nodes to communicate with GramJS
+# Node-RED nodes to communicate with TeleProto
 
 <p align="center">
 <img alt="GitHub issues" src="https://img.shields.io/github/issues/patricktobias86/node-red-telegram-account?color=56BEB8" />
@@ -10,7 +10,7 @@
 npm i @patricktobias86/node-red-telegram-account
 ```
 
-This package contains a collection of Node‑RED nodes built on top of [GramJS](https://gram.js.org/). They make it easier to interact with the Telegram MTProto API from your flows.
+This package contains a collection of Node‑RED nodes built on top of [TeleProto](https://www.npmjs.com/package/teleproto). They make it easier to interact with the Telegram MTProto API from your flows.
 
 ## Node overview
 

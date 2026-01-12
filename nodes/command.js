@@ -1,4 +1,4 @@
-const { NewMessage } = require("telegram/events");
+const { NewMessage } = require("teleproto/events");
 
 
 module.exports = function (RED) {

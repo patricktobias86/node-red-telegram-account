@@ -1,6 +1,6 @@
-const { TelegramClient } = require("telegram");
-const { parseID } = require("telegram/Utils");
-const { Api } = require("telegram");
+const { TelegramClient } = require("teleproto");
+const { parseID } = require("teleproto/Utils");
+const { Api } = require("teleproto");
 
 module.exports = function (RED) {
     function PromoteAdmin(config) {

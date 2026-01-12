@@ -26,7 +26,7 @@ function load() {
   };
 
   proxyquire('../nodes/command.js', {
-    'telegram/events': { NewMessage: NewMessageStub }
+    'teleproto/events': { NewMessage: NewMessageStub }
   })(RED);
 
   return { NodeCtor, addCalls, logs };

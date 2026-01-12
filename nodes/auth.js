@@ -1,5 +1,5 @@
-const { TelegramClient } = require("telegram");
-const { StringSession } = require("telegram/sessions");
+const { TelegramClient } = require("teleproto");
+const { StringSession } = require("teleproto/sessions");
 
 module.exports = function (RED) {
     function TelegramClientConfig(config) {

@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.2.0] - 2026-01-12
+### Changed
+- Switched underlying Telegram MTProto client dependency from `telegram` (GramJS) to `teleproto`.
+
 ## [1.1.22] - 2026-01-12
 ### Fixed
 - Receiver node now handles additional MTProto update types that were being silently dropped:

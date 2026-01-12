@@ -32,8 +32,8 @@ function load() {
   };
 
   proxyquire('../nodes/config.js', {
-    telegram: { TelegramClient: TelegramClientStub },
-    'telegram/sessions': { StringSession: StringSessionStub }
+    teleproto: { TelegramClient: TelegramClientStub },
+    'teleproto/sessions': { StringSession: StringSessionStub }
   })(RED);
 
   return { NodeCtor, instances };

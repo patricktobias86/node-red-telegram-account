@@ -1,7 +1,7 @@
 {
   "name": "@patricktobias86/node-red-telegram-account",
-  "version": "1.1.22",
-  "description": "Node-RED nodes to communicate with GramJS.",
+  "version": "1.2.0",
+  "description": "Node-RED nodes to communicate with TeleProto.",
   "main": "nodes/config.js",
   "keywords": [
     "node-red",
@@ -44,7 +44,7 @@
     "registry": "https://registry.npmjs.org"
   },
   "dependencies": {
-    "telegram": "^2.17.10"
+    "teleproto": "^1.221.2"
   },
   "devDependencies": {
     "mocha": "^11.7.1",

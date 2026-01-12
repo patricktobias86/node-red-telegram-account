@@ -1,5 +1,5 @@
-const { TelegramClient } = require("telegram");
-const { parseID } = require("telegram/Utils");
+const { TelegramClient } = require("teleproto");
+const { parseID } = require("teleproto/Utils");
 
 module.exports = function (RED) {
     function SendMessage(config) {
