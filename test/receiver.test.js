@@ -142,4 +142,89 @@ describe('Receiver node', function() {
     assert.strictEqual(sent[0].payload.chatId, 2877134366);
     assert.strictEqual(sent[0].payload.senderId, 6304354944);
   });
+
+  it('handles UpdateNewScheduledMessage updates', function() {
+    const { NodeCtor, addCalls } = load();
+    const sent = [];
+    const node = new NodeCtor({config:'c', ignore:'', ignoreMessageTypes:'', maxFileSizeMb:''});
+    node.send = (msg) => sent.push(msg);
+    const handler = addCalls[0].fn;
+
+    handler({
+      className: 'UpdateNewScheduledMessage',
+      message: {
+        id: 456,
+        fromId: { userId: 789, className: 'PeerUser' },
+        peerId: { userId: 789, className: 'PeerUser' },
+        message: 'scheduled message',
+        date: 1234567890
+      }
+    });
+
+    assert.strictEqual(sent.length, 1);
+    assert.strictEqual(sent[0].payload.message.message, 'scheduled message');
+  });
+
+  it('handles UpdateBotNewBusinessMessage updates', function() {
+    const { NodeCtor, addCalls } = load();
+    const sent = [];
+    const node = new NodeCtor({config:'c', ignore:'', ignoreMessageTypes:'', maxFileSizeMb:''});
+    node.send = (msg) => sent.push(msg);
+    const handler = addCalls[0].fn;
+
+    handler({
+      className: 'UpdateBotNewBusinessMessage',
+      message: {
+        id: 123,
+        fromId: { userId: 456, className: 'PeerUser' },
+        peerId: { userId: 789, className: 'PeerUser' },
+        message: 'business message'
+      }
+    });
+
+    assert.strictEqual(sent.length, 1);
+    assert.strictEqual(sent[0].payload.message.message, 'business message');
+  });
+
+  it('handles UpdateBotEditBusinessMessage updates', function() {
+    const { NodeCtor, addCalls } = load();
+    const sent = [];
+    const node = new NodeCtor({config:'c', ignore:'', ignoreMessageTypes:'', maxFileSizeMb:''});
+    node.send = (msg) => sent.push(msg);
+    const handler = addCalls[0].fn;
+
+    handler({
+      className: 'UpdateBotEditBusinessMessage',
+      message: {
+        id: 123,
+        fromId: { userId: 456, className: 'PeerUser' },
+        peerId: { userId: 789, className: 'PeerUser' },
+        message: 'edited business message'
+      }
+    });
+
+    assert.strictEqual(sent.length, 1);
+    assert.strictEqual(sent[0].payload.message.message, 'edited business message');
+  });
+
+  it('handles UpdateQuickReplyMessage updates', function() {
+    const { NodeCtor, addCalls } = load();
+    const sent = [];
+    const node = new NodeCtor({config:'c', ignore:'', ignoreMessageTypes:'', maxFileSizeMb:''});
+    node.send = (msg) => sent.push(msg);
+    const handler = addCalls[0].fn;
+
+    handler({
+      className: 'UpdateQuickReplyMessage',
+      message: {
+        id: 999,
+        fromId: { userId: 111, className: 'PeerUser' },
+        peerId: { userId: 222, className: 'PeerUser' },
+        message: 'quick reply'
+      }
+    });
+
+    assert.strictEqual(sent.length, 1);
+    assert.strictEqual(sent[0].payload.message.message, 'quick reply');
+  });
 });

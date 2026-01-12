@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.1.22] - 2026-01-12
+### Fixed
+- Receiver node now handles additional MTProto update types that were being silently dropped:
+  - `UpdateNewScheduledMessage` - Scheduled messages
+  - `UpdateDeleteScheduledMessages` - Deleted scheduled messages
+  - `UpdateBotNewBusinessMessage` - Telegram Business account messages
+  - `UpdateBotEditBusinessMessage` - Edited business messages
+  - `UpdateBotDeleteBusinessMessage` - Deleted business messages
+  - `UpdateQuickReplyMessage` - Quick reply messages
+  - `UpdateReadStories` - Story read updates
+
 ## [1.1.21] - 2026-01-06
 ### Fixed
 - Receiver node now correctly handles messages from channels when the sender is an anonymous admin, ensuring such messages are processed and not dropped.

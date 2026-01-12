@@ -321,10 +321,23 @@ const extractMessageEvents = (rawUpdate) => {
             return;
         }
 
+        // Handle all known message-bearing update types.
+        // Standard message updates:
         if (className === 'UpdateNewMessage' ||
             className === 'UpdateNewChannelMessage' ||
             className === 'UpdateEditMessage' ||
-            className === 'UpdateEditChannelMessage') {
+            className === 'UpdateEditChannelMessage' ||
+            // Scheduled message updates:
+            className === 'UpdateNewScheduledMessage' ||
+            className === 'UpdateDeleteScheduledMessages' ||
+            // Business account message updates (Telegram Business API):
+            className === 'UpdateBotNewBusinessMessage' ||
+            className === 'UpdateBotEditBusinessMessage' ||
+            className === 'UpdateBotDeleteBusinessMessage' ||
+            // Quick reply message updates:
+            className === 'UpdateQuickReplyMessage' ||
+            // Read stories (contains message-like content):
+            className === 'UpdateReadStories') {
             if (update.message) {
                 results.push({ update, message: update.message });
             } else {
