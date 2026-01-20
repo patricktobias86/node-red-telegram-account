@@ -17,11 +17,25 @@ module.exports = function (RED) {
             try {
                 let entity;
 
-                // Check if the input is a URL
-                if (input.includes('https://t.me/')) {
-                    const username = input.split('/').pop();
-                    entity = await client.getEntity(username);
-                } else {
+                // Check if the input is a Telegram URL and extract the username safely
+                try {
+                    const url = new URL(input);
+                    const hostname = url.hostname.toLowerCase();
+
+                    if (hostname === 't.me') {
+                        const segments = url.pathname.split('/').filter(Boolean);
+                        const username = segments[segments.length - 1];
+
+                        if (username) {
+                            entity = await client.getEntity(username);
+                        } else {
+                            entity = await client.getEntity(input);
+                        }
+                    } else {
+                        entity = await client.getEntity(input);
+                    }
+                } catch (e) {
+                    // Not a valid URL, treat input as a plain identifier
                     entity = await client.getEntity(input);
                 }
 
