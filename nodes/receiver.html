@@ -9,6 +9,7 @@
             ignore: { value:""},
             ignoreMessageTypes: { value: "" },
             debug: { value: false },
+            emitEdits: { value: true },
             maxFileSizeMb: { value: "" },
             includeChats: { value: "" },
             excludeChats: { value: "" },
@@ -52,6 +53,13 @@
         <i class="fa fa-bug"></i> Debug
       </label>
       <input type="checkbox" id="node-input-debug">
+    </div>
+    <div class="form-row">
+      <label for="node-input-emitEdits">
+        <i class="fa fa-pencil"></i> Emit edits
+      </label>
+      <input type="checkbox" id="node-input-emitEdits">
+      <p class="form-tips">When disabled, edited message updates (e.g. like/view counters changing on channel posts) are ignored.</p>
     </div>
     <div class="form-row">
       <label for="node-input-ignore">
@@ -177,6 +185,11 @@
             <span class="property-type">string</span>
         </dt>
         <dd>List of message or media types to skip (for example <code>video</code>, <code>document</code>, or <code>sticker</code>). Separate multiple entries with commas or new lines.</dd>
+
+        <dt>Emit edits
+            <span class="property-type">boolean</span>
+        </dt>
+        <dd>When disabled, the receiver ignores edited message updates (such as <code>UpdateEditChannelMessage</code>) to avoid duplicate outputs for the same post.</dd>
 
         <dt>Max media size (MB)
             <span class="property-type">number</span>

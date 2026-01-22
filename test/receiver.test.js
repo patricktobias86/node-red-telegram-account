@@ -207,6 +207,25 @@ describe('Receiver node', function() {
     assert.strictEqual(sent[0].payload.message.message, 'edited business message');
   });
 
+  it('can ignore edited message updates when emitEdits is disabled', function() {
+    const { NodeCtor, addCalls } = load();
+    const sent = [];
+    const node = new NodeCtor({config:'c', ignore:'', ignoreMessageTypes:'', maxFileSizeMb:'', emitEdits:false});
+    node.send = (msg) => sent.push(msg);
+    const handler = addCalls[0].fn;
+
+    handler({
+      className: 'UpdateEditChannelMessage',
+      message: {
+        id: 171429,
+        peerId: { channelId: '1050289360', className: 'PeerChannel' },
+        message: 'same content'
+      }
+    });
+
+    assert.strictEqual(sent.length, 0);
+  });
+
   it('handles UpdateQuickReplyMessage updates', function() {
     const { NodeCtor, addCalls } = load();
     const sent = [];

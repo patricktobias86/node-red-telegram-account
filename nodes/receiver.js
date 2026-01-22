@@ -366,6 +366,7 @@ module.exports = function (RED) {
     const client =  this.config.client;
     const ignore = splitList(config.ignore || "");
     const ignoredMessageTypes = toLowerCaseSet(splitList(config.ignoreMessageTypes || ""));
+    const emitEdits = config.emitEdits !== false;
     const maxFileSizeMb = Number(config.maxFileSizeMb);
     const maxFileSizeBytes = Number.isFinite(maxFileSizeMb) && maxFileSizeMb > 0
         ? maxFileSizeMb * 1024 * 1024
@@ -480,9 +481,23 @@ module.exports = function (RED) {
         }
 
         for (const { update, message } of extracted) {
+            const updateClassName = getClassName(update) || 'unknown';
+
+            if (!emitEdits) {
+                const isEditUpdate =
+                    updateClassName === 'UpdateEditMessage' ||
+                    updateClassName === 'UpdateEditChannelMessage' ||
+                    updateClassName === 'UpdateBotEditBusinessMessage';
+                if (isEditUpdate) {
+                    debugLog(`receiver ignoring edit update due to emitEdits=false; updateClassName=${updateClassName}`);
+                    debugSend({ event: 'ignored', reason: 'emitEdits', updateClassName });
+                    continue;
+                }
+            }
+
             if (!message) {
-                debugLog(`receiver ignoring message update without message payload: ${getClassName(update) || 'unknown'}`);
-                debugSend({ event: 'ignored', reason: 'missing-message', updateClassName: getClassName(update) || 'unknown' });
+                debugLog(`receiver ignoring message update without message payload: ${updateClassName}`);
+                debugSend({ event: 'ignored', reason: 'missing-message', updateClassName });
                 continue;
             }
 

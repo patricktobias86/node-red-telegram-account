@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.2.1] - 2026-01-22
+### Added
+- Receiver node option to disable emitting edited message updates (useful to prevent duplicate outputs when counters/markup change on channel posts).
+
 ## [1.2.0] - 2026-01-12
 ### Changed
 - Switched underlying Telegram MTProto client dependency from `telegram` (GramJS) to `teleproto`.
