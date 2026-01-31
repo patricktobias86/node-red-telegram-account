@@ -101,6 +101,87 @@ describe('Receiver node', function() {
     assert.strictEqual(sent.length, 1);
   });
 
+  it('filters by includeChats', function() {
+    const { NodeCtor, addCalls } = load();
+    const sent = [];
+    const node = new NodeCtor({config:'c', ignore:'', ignoreMessageTypes:'', maxFileSizeMb:'', includeChats:'111'});
+    node.send = (msg) => sent.push(msg);
+    const handler = addCalls[0].fn;
+
+    handler({
+      className: 'UpdateNewMessage',
+      message: { fromId: { userId: 123 }, peerId:{ userId: 111 }, message: 'allowed' }
+    });
+    handler({
+      className: 'UpdateNewMessage',
+      message: { fromId: { userId: 123 }, peerId:{ userId: 222 }, message: 'blocked' }
+    });
+
+    assert.strictEqual(sent.length, 1);
+    assert.strictEqual(sent[0].payload.chatId, 111);
+    assert.strictEqual(sent[0].payload.message.message, 'allowed');
+  });
+
+  it('filters by excludeChats', function() {
+    const { NodeCtor, addCalls } = load();
+    const sent = [];
+    const node = new NodeCtor({config:'c', ignore:'', ignoreMessageTypes:'', maxFileSizeMb:'', excludeChats:'222'});
+    node.send = (msg) => sent.push(msg);
+    const handler = addCalls[0].fn;
+
+    handler({
+      className: 'UpdateNewMessage',
+      message: { fromId: { userId: 123 }, peerId:{ userId: 111 }, message: 'allowed' }
+    });
+    handler({
+      className: 'UpdateNewMessage',
+      message: { fromId: { userId: 123 }, peerId:{ userId: 222 }, message: 'blocked' }
+    });
+
+    assert.strictEqual(sent.length, 1);
+    assert.strictEqual(sent[0].payload.chatId, 111);
+  });
+
+  it('filters by includeSenders', function() {
+    const { NodeCtor, addCalls } = load();
+    const sent = [];
+    const node = new NodeCtor({config:'c', ignore:'', ignoreMessageTypes:'', maxFileSizeMb:'', includeSenders:'123'});
+    node.send = (msg) => sent.push(msg);
+    const handler = addCalls[0].fn;
+
+    handler({
+      className: 'UpdateNewMessage',
+      message: { fromId: { userId: 123 }, peerId:{ userId: 111 }, message: 'allowed' }
+    });
+    handler({
+      className: 'UpdateNewMessage',
+      message: { fromId: { userId: 456 }, peerId:{ userId: 111 }, message: 'blocked' }
+    });
+
+    assert.strictEqual(sent.length, 1);
+    assert.strictEqual(sent[0].payload.senderId, 123);
+  });
+
+  it('filters by excludeSenders', function() {
+    const { NodeCtor, addCalls } = load();
+    const sent = [];
+    const node = new NodeCtor({config:'c', ignore:'', ignoreMessageTypes:'', maxFileSizeMb:'', excludeSenders:'456'});
+    node.send = (msg) => sent.push(msg);
+    const handler = addCalls[0].fn;
+
+    handler({
+      className: 'UpdateNewMessage',
+      message: { fromId: { userId: 123 }, peerId:{ userId: 111 }, message: 'allowed' }
+    });
+    handler({
+      className: 'UpdateNewMessage',
+      message: { fromId: { userId: 456 }, peerId:{ userId: 111 }, message: 'blocked' }
+    });
+
+    assert.strictEqual(sent.length, 1);
+    assert.strictEqual(sent[0].payload.senderId, 123);
+  });
+
   it('populates chatId and senderId for string ids', function() {
     const { NodeCtor, addCalls } = load();
     const sent = [];

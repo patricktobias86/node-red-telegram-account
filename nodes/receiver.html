@@ -218,7 +218,7 @@
     </dl>
 
     <h3>Details</h3>
-    <p>The <b>receiver</b> node uses the Telegram client to listen for all new messages in real-time. It emits a message to the next connected Node-RED node whenever a new Telegram message is received, provided the sender's user ID is not in the ignore list.</p>
+    <p>The <b>receiver</b> node uses the Telegram client to listen for all new messages in real-time. It emits a message to the next connected Node-RED node whenever a new Telegram message is received, provided it passes the configured filters.</p>
 
     <h3>Example</h3>
     <pre>
@@ -256,7 +256,9 @@
     <h3>Notes</h3>
     <ul>
         <li>Ensure the Telegram bot has sufficient permissions to receive messages in the configured chat or channel.</li>
-        <li>The <b>Ignore List</b> only filters messages based on the sender's user ID.</li>
+        <li>The <b>Ignore List</b> only filters messages where the sender can be identified as a user.</li>
+        <li><b>Include/Exclude chats</b> match against <code>payload.chatId</code>.</li>
+        <li><b>Include/Exclude senders</b> match against <code>payload.senderId</code> (user/chat/channel IDs depending on the update).</li>
         <li>Use <b>Ignore message types</b> to drop updates that contain media you don't want to process, such as large videos or documents.</li>
         <li>For advanced filtering based on message content, consider chaining this node with additional processing nodes in Node-RED.</li>
     </ul>

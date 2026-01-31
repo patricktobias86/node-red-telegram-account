@@ -377,6 +377,26 @@ module.exports = function (RED) {
     const includeSenders = splitList(config.includeSenders || "");
     const excludeSenders = splitList(config.excludeSenders || "");
 
+    const toNormalizedIdSet = (values) => {
+        const result = new Set();
+        for (const value of values) {
+            if (value == null) {
+                continue;
+            }
+            const normalized = String(value).trim();
+            if (!normalized) {
+                continue;
+            }
+            result.add(normalized);
+        }
+        return result;
+    };
+
+    const includeChatSet = toNormalizedIdSet(includeChats);
+    const excludeChatSet = toNormalizedIdSet(excludeChats);
+    const includeSenderSet = toNormalizedIdSet(includeSenders);
+    const excludeSenderSet = toNormalizedIdSet(excludeSenders);
+
     const extractPhotoSize = (photo) => {
         if (!photo || !Array.isArray(photo.sizes)) {
             return null;
@@ -457,13 +477,9 @@ module.exports = function (RED) {
         node.send([null, { payload }]);
     };
 
-    let rawOptions = {};
-    if (includeChats.length > 0) rawOptions.chats = includeChats;
-    if (excludeChats.length > 0) rawOptions.blacklistChats = excludeChats;
-    if (includeSenders.length > 0) rawOptions.senders = includeSenders;
-    if (excludeSenders.length > 0) rawOptions.blacklistSenders = excludeSenders;
-
-    const event = new Raw(rawOptions);
+    // teleproto's Raw event builder only supports `types` and `func` options.
+    // Chat/sender filtering is implemented below after we normalize the message metadata.
+    const event = new Raw({});
     const handler = (rawUpdate) => {
         const debug = node.debugEnabled;
         if (debug) {
@@ -523,6 +539,44 @@ module.exports = function (RED) {
                 null;
 
             const chatId = peerChatId(peer);
+            const chatIdString = chatId != null ? String(chatId) : null;
+            const senderIdString = senderId != null ? String(senderId) : null;
+
+            if (includeChatSet.size > 0) {
+                const allowed = chatIdString != null && includeChatSet.has(chatIdString);
+                if (!allowed) {
+                    debugLog(`receiver ignoring message due to includeChats; chatId=${chatIdString ?? 'unknown'}`);
+                    debugSend({ event: 'ignored', reason: 'includeChats', chatId });
+                    continue;
+                }
+            }
+
+            if (excludeChatSet.size > 0) {
+                const blocked = chatIdString != null && excludeChatSet.has(chatIdString);
+                if (blocked) {
+                    debugLog(`receiver ignoring message due to excludeChats; chatId=${chatIdString}`);
+                    debugSend({ event: 'ignored', reason: 'excludeChats', chatId });
+                    continue;
+                }
+            }
+
+            if (includeSenderSet.size > 0) {
+                const allowed = senderIdString != null && includeSenderSet.has(senderIdString);
+                if (!allowed) {
+                    debugLog(`receiver ignoring message due to includeSenders; senderId=${senderIdString ?? 'unknown'} senderType=${senderType}`);
+                    debugSend({ event: 'ignored', reason: 'includeSenders', senderId, senderType });
+                    continue;
+                }
+            }
+
+            if (excludeSenderSet.size > 0) {
+                const blocked = senderIdString != null && excludeSenderSet.has(senderIdString);
+                if (blocked) {
+                    debugLog(`receiver ignoring message due to excludeSenders; senderId=${senderIdString} senderType=${senderType}`);
+                    debugSend({ event: 'ignored', reason: 'excludeSenders', senderId, senderType });
+                    continue;
+                }
+            }
 
             if (ignoredMessageTypes.size > 0) {
                 const shouldIgnoreType = Array.from(messageTypes).some((type) => ignoredMessageTypes.has(type));
