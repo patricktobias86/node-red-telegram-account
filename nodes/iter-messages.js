@@ -15,6 +15,12 @@ module.exports = function (RED) {
     
             /** @type {TelegramClient} */
             const client = msg.payload?.client ? msg.payload.client : this.config.client;
+
+            if (!client) {
+                node.error('No Telegram client available. Check account configuration.');
+                return;
+            }
+
             const chatId = msg.payload?.chatId ? msg.payload.chatId : config.chatId;
             let peerId = chatId === "me" ? chatId : utils.parseID(chatId);
 

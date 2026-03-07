@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.2.2] - 2026-03-07
+### Added
+- Added guarded checks before the Telegram client is called to avoid errors when the client is not available.
+
 ## [1.2.1] - 2026-01-22
 ### Added
 - Receiver node option to disable emitting edited message updates (useful to prevent duplicate outputs when counters/markup change on channel posts).

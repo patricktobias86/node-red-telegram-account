@@ -18,6 +18,11 @@ module.exports = function (RED) {
               /** @type {TelegramClient} */
             const client = msg.payload?.client ? msg.payload.client : this.config.client;
 
+            if (!client) {
+                node.error('No Telegram client available. Check account configuration.');
+                return;
+            }
+
             try {
                 const response = await client.deleteMessages(chatId, messageIds, { revoke });
 

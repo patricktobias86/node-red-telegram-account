@@ -15,6 +15,12 @@ module.exports = function (RED) {
     
             /** @type {TelegramClient} */
             const client = msg.payload?.client ? msg.payload.client : this.config.client;
+
+            if (!client) {
+                node.error('No Telegram client available. Check account configuration.');
+                return;
+            }
+
             const limit = msg.payload.limit || config.limit;
             const offsetDate = msg.payload.offsetDate || config.offsetDate;
             const offsetId = msg.payload.offsetId || config.offsetId;

@@ -46,6 +46,11 @@ module.exports = function (RED) {
         }
     };
 
+    if (!client) {
+      node.error('No Telegram client available. Check account configuration.');
+      return;
+    }
+
     try {
       client.addEventHandler(handler, event);
     } catch (err) {

@@ -15,6 +15,12 @@ module.exports = function (RED) {
                 node.log('promote-admin input: ' + JSON.stringify(msg));
             }
             const client = msg.payload?.client || this.config.client;
+
+            if (!client) {
+                node.error('No Telegram client available. Check account configuration.');
+                return;
+            }
+
             const chatId = msg.payload.chatId || config.chatId;
             const userId = msg.payload.userId || config.userId;
             const rank = msg.payload.rank || config.rank || "admin";
