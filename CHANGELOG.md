@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.2.4] - 2026-03-07
+### Fixed
+- Security Fixes
+
 ## [1.2.2] - 2026-03-07
 ### Added
 - Added guarded checks before the Telegram client is called to avoid errors when the client is not available.
