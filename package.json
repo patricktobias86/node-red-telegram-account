@@ -1,6 +1,6 @@
 {
   "name": "@patricktobias86/node-red-telegram-account",
-  "version": "1.2.5",
+  "version": "1.2.6",
   "description": "Node-RED nodes to communicate with TeleProto.",
   "main": "nodes/config.js",
   "keywords": [
@@ -16,7 +16,7 @@
     "url": "https://github.com/patricktobias86"
   },
   "engines": {
-    "node": ">=18"
+    "node": ">=20"
   },
   "bugs": {
     "url": "https://github.com/patricktobias86/node-red-telegram-account/issues"
@@ -49,6 +49,9 @@
   "devDependencies": {
     "mocha": "^11.7.5",
     "proxyquire": "^2.1.3"
+  },
+  "overrides": {
+    "serialize-javascript": "^7.0.7"
   },
   "scripts": {
     "test": "mocha"
